@@ -1,13 +1,72 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Electrolize&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Signika+Negative:wght@300..700&family=Truculenta:opsz,wght@12..72,100..900&display=swap");
+
+* {
+  box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  margin: 0;
+}
+
+.motto {
+  font-size: 2.5rem;
+  font-family: "Electrolize", sans-serif;
+}
+
+.first-actions .btn1 {
+  width: 50%;
+  height: 3rem;
+  border-radius: 2rem !important;
+}
+
+.qualities Button {
+  width: 20%;
+  min-height: 3rem;
+  height: auto;
+  text-wrap: wrap;
+  font-size: 1.1rem;
+  cursor: default !important;
+}
+
+.services_list {
+  font-family: "Signika Negative", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 1.3rem;
+}
+
+.light_bg {
+  background: rgb(244, 240, 240);
+}
+
+.analytics div {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.analytics div h4,
+.analytics div p {
+  margin: 0;
+}
+
+.analytics div h4 {
+  font-size: 2.5rem;
+}
+
+.analytics div p {
+  font-weight: bold;
+}
+
+.footer_bg {
+  background: darkslategray;
+}
+
+.footer h4,
+.footer p,
+.footer li,
+.footer a {
+  color: white;
 }
