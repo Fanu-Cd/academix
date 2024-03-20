@@ -1,16 +1,37 @@
 import { Button, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import lms from "../assets/undraw_online_learning_re_qw08.svg";
+import lms from "../../assets/undraw_online_learning_re_qw08.svg";
 import { FaHandPointUp } from "react-icons/fa";
 import { GrGrow } from "react-icons/gr";
 import { IoGlobe } from "react-icons/io5";
 import { IoIosSpeedometer } from "react-icons/io";
-import teacher from "../assets/undraw_teacher_re_sico.svg";
-import student from "../assets/undraw_online_reading_np7n.svg";
-import admin from "../assets/undraw_dashboard_re_3b76.svg";
-import Footer from "../components/Footer";
+import teacher from "../../assets/undraw_teacher_re_sico.svg";
+import student from "../../assets/undraw_online_reading_np7n.svg";
+import admin from "../../assets/undraw_dashboard_re_3b76.svg";
+import Footer from "../../components/Footer";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const LandingPage = () => {
-  return (
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  useEffect(() => {
+    if (user) {
+      switch (user.role) {
+        case "admin":
+          navigate("/me/admin");
+          break;
+        case "teacher":
+          navigate("/me/teacher");
+          break;
+        case "Teacher":
+            navigate("/me/teacher");
+            break;
+        default:
+      }
+    }
+  }, []);
+
+  return !user ? (
     <div
       className="mx-auto mt-4 p-0"
       style={{ width: "90%", minHeight: "30rem", height: "auto" }}
@@ -63,13 +84,15 @@ const LandingPage = () => {
           <div style={{ width: "30%" }}>
             <Input.Search placeholder="Search" style={{ width: "100%" }} />
           </div>
-          <Button
-            style={{ width: "25%", height: "2.5rem" }}
-            type="primary"
-            icon={<UserOutlined />}
-          >
-            Login / Sign Up
-          </Button>
+          <Link to="/account/login" style={{ width: "25%" }}>
+            <Button
+              style={{ width: "100%", height: "2.5rem" }}
+              type="primary"
+              icon={<UserOutlined />}
+            >
+              Login / Sign Up
+            </Button>
+          </Link>
         </div>
       </nav>
       {/* HERO PAGE */}
@@ -89,9 +112,11 @@ const LandingPage = () => {
               Learn, Grow, Achieve – Together.
             </p>
             <div className="w-100 d-flex justify-content-center align-items-center first-actions mt-3">
-              <Button className="btn1 bg-primary text-white fs-5">
-                Get Started
-              </Button>
+              <Link to="/account/login" className="w-50">
+                <Button className="btn1 bg-primary text-white fs-5">
+                  Get Started
+                </Button>
+              </Link>
             </div>
           </div>
           <div className="col-md-6 d-none d-md-inline d-flex justify-content-center align-items-center">
@@ -206,6 +231,8 @@ const LandingPage = () => {
       {/* FOOTER */}
       <Footer mt="5rem" />
     </div>
+  ) : (
+    ""
   );
 };
 export default LandingPage;

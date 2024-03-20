@@ -8,7 +8,7 @@ export default function ErrorPage() {
         title="404"
         subTitle="Sorry, the page you visited does not exist."
         extra={
-          <Button className="text-decoration-none" href="/home" type="primary">
+          <Button className="text-decoration-none" href="/" type="primary">
             Back to home
           </Button>
         }
