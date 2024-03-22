@@ -23,6 +23,7 @@ import AccountBanned from "./pages/General/AccountBanned";
 import WaitForApproval from "./pages/General/WaitForApproval";
 import Teacher from "./pages/Teacher/Teacher";
 import Student from "./pages/Student/Student";
+import API_URL from "./apiUrl";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -84,6 +85,7 @@ const router = createBrowserRouter([
 
 function App() {
   useEffect(() => {
+    console.log("environment, apiUrl", process.env.NODE_ENV, API_URL);
     getDepartments();
     getUsers();
     getCourses();
