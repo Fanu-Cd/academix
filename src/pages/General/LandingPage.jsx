@@ -23,9 +23,9 @@ const LandingPage = () => {
         case "teacher":
           navigate("/me/teacher");
           break;
-        case "Teacher":
-            navigate("/me/teacher");
-            break;
+        case "student":
+          navigate("/me/student");
+          break;
         default:
       }
     }
