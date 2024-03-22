@@ -50,6 +50,12 @@ const Login = () => {
                 navigate("/me/teacher");
               }, 500);
               break;
+            case "student":
+              localStorage.setItem("currentUser", JSON.stringify(res.result));
+              setTimeout(() => {
+                navigate("/me/student");
+              }, 500);
+              break;
             default:
             //
           }
