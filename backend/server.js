@@ -7,11 +7,13 @@ const cors = require("cors");
 const User = require("./models/user");
 const Department = require("./models/department");
 const Course = require("./models/course");
+const CourseRegistration = require("./models/course-registration");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const path = require("path");
 const Lesson = require("./models/lesson");
+const Exam = require("./models/exam");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -306,6 +308,75 @@ app.get("/get-lessons", (req, response) => {
     .catch((err) => {
       response.json({ error: err });
     });
+});
+
+app.get("/get-course-regs", (req, response) => {
+  CourseRegistration.find()
+    .then((res) => {
+      response.json({ result: res });
+    })
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.post("/register-for-course", (req, response) => {
+  const { uid, courseid } = req.body;
+  const newCourseReg = new CourseRegistration({
+    course: convertFieldsToObjectId(courseid),
+    user: convertFieldsToObjectId(uid),
+  });
+  newCourseReg
+    .save()
+    .then((res) => {
+      response.json({ result: res });
+    })
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.post("/update-course-reg/:id", (req, response) => {
+  const {id} = req.params
+  const { status } = req.body;
+  CourseRegistration.findByIdAndUpdate(id, { status: status })
+    .then((res) => response.json({ result: res }))
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.get("/get-exams", (req, response) => {
+  Exam.find()
+    .then((Res) => {
+      response.json({ result: Res });
+    })
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.post("/upload-exam", (req, response) => {
+  upload(req, response, (err) => {
+    if (err) {
+      response.json({ error: err });
+      return;
+    }
+    const { lesson, title, filePaths } = req.body;
+    const newExam = new Exam({
+      lesson: convertFieldsToObjectId(lesson),
+      title: title,
+      filePaths: filePaths,
+    });
+    newExam
+      .save()
+      .then((res) => {
+        response.json({ result: res });
+      })
+      .catch((err) => {
+        response.json({ error: err });
+      });
+  });
 });
 
 //Methods
