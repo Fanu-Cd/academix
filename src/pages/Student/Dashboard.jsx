@@ -5,13 +5,17 @@ import { useSelector } from "react-redux";
 const StudentDashboard = () => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const allCourses = useSelector((state) => state.myReducer.courses);
-  const myCourses =
-    allCourses &&
-    allCourses.filter((course) => course.teachers.includes(currentUser._id));
-  const allLessons = useSelector((state) => state.myReducer.lessons);
-  const myLessons = allLessons
-    ? allLessons.filter((lesson) => lesson.uploadedBy == currentUser._id)
-    : [];
+
+  const courseRegs = useSelector((state) => state.myReducer.courseRegs);
+  const myCourseRegs = courseRegs.filter((cr) => cr.user == currentUser._id);
+
+  const myCourses = allCourses.filter(
+    (course) => course.department == currentUser.department
+  );
+  const myFinalCourses = myCourses.filter((course) => {
+    let isInMyCourseRegs = myCourseRegs.filter((cr) => cr.course == course._id);
+    return isInMyCourseRegs;
+  });
 
   return (
     <div className="w-100 bg-light" style={{ height: "100%" }}>
@@ -23,7 +27,7 @@ const StudentDashboard = () => {
                 <BookOutlined className="fs-3" />
               </div>
               <h5 className="text-center">My Courses</h5>
-              <h3 className="text-center">{myCourses && myCourses.length}</h3>
+              <h3 className="text-center">{myFinalCourses && myFinalCourses.length}</h3>
             </Card>
           </Col>
           <Col span={12}>
@@ -32,7 +36,7 @@ const StudentDashboard = () => {
                 <FaPencilAlt className="fs-3" />
               </div>
               <h5 className="text-center">My Lessons</h5>
-              <h3 className="text-center">{myLessons.length}</h3>
+              <h3 className="text-center">{"0"}</h3>
             </Card>
           </Col>
         </Row>
