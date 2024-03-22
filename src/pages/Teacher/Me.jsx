@@ -2,9 +2,10 @@ import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Input, Modal, message } from "antd";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import API_URL from "../../apiUrl";
 
 const Me = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
 
   const [showPWModal, setShowPWModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -12,7 +13,7 @@ const Me = () => {
   const [status, setStatus] = useState({ inputs: {} });
 
   const departments = useSelector((state) => state.myReducer.departments);
-  console.log(departments)
+  console.log(departments);
   const handleChange = (e) => {
     setStatus({ ...status, inputs: {} });
     const { name, value } = e.target;
@@ -86,7 +87,7 @@ const Me = () => {
   };
 
   const userInfo = JSON.parse(localStorage.getItem("currentUser"));
-  console.log("userInfo",userInfo)
+  console.log("userInfo", userInfo);
   return (
     <div className="w-100">
       <h5 className="text-center">Me</h5>
@@ -99,7 +100,15 @@ const Me = () => {
           <li>Name : {userInfo.name}</li>
           <li>Email : {userInfo.email}</li>
           <li>School : {userInfo.school}</li>
-          <li>Department : {departments&&departments.filter(dept=>dept.value==userInfo.department)[0]&&departments.filter(dept=>dept.value==userInfo.department)[0].name}</li>
+          <li>
+            Department :{" "}
+            {departments &&
+              departments.filter(
+                (dept) => dept.value == userInfo.department
+              )[0] &&
+              departments.filter((dept) => dept.value == userInfo.department)[0]
+                .name}
+          </li>
         </ul>
         <div className="d-flex justify-content-between align-items-center">
           <Button

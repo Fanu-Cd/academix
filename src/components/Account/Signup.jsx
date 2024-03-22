@@ -4,10 +4,11 @@ import Footer from "../Footer";
 import { useEffect, useState } from "react";
 import { validateEmail, matchValues, fetcher } from "../../_services";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../../apiUrl";
 const Signup = () => {
   const navigate = useNavigate();
 
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
 
   const [input, setInput] = useState({
     name: "",

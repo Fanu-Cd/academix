@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Footer from "../Footer";
 import { useEffect, useState } from "react";
 import { validateEmail } from "../../_services";
+import API_URL from "../../apiUrl";
 const Login = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL
   const navigate = useNavigate();
   const [input, setInput] = useState({
     email: "",

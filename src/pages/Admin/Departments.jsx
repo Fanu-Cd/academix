@@ -6,8 +6,10 @@ import { PlusCircleFilled } from "@ant-design/icons";
 import { fetcher } from "../../_services";
 import { setDepartments } from "../../store/store";
 import { useDispatch } from "react-redux";
+import API_URL from "../../apiUrl";
 const Departments = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
+
   const dispatch = useDispatch();
   const columns = [
     {

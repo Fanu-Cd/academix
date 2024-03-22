@@ -2,9 +2,10 @@ import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Input, Modal, message } from "antd";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import API_URL from "../../apiUrl";
 
 const Me = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
 
   const [showPWModal, setShowPWModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);

@@ -6,8 +6,10 @@ import { PlusCircleFilled } from "@ant-design/icons";
 import { fetcher } from "../../_services";
 import { setCourses, setDepartments } from "../../store/store";
 import { useDispatch } from "react-redux";
+import API_URL from "../../apiUrl";
 const Courses = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
+
   const dispatch = useDispatch();
   const columns = [
     {
@@ -212,7 +214,7 @@ const Courses = () => {
         if (res.result) {
           message.success("Course is Successfully Released!");
           setShowViewModal(false);
-          getCourses()
+          getCourses();
         }
       })
       .catch((err) => {

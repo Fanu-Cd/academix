@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { Button, Input, Popconfirm, Select, message } from "antd";
 import { fetcher } from "../../_services";
 import { setCourseRegs } from "../../store/store";
+import API_URL from "../../apiUrl";
 
 const Courses = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
+
   const dispatch = useDispatch();
   const columns = [
     {
@@ -48,13 +50,15 @@ const Courses = () => {
       },
     },
     {
-        title:"Total Lessons",
-        render(item){
-            console.log(myLessons,item)
-            const totalLesson=myLessons.filter(lesson=>lesson.course==item._id).length
-        return totalLesson
-        }
-    }
+      title: "Total Lessons",
+      render(item) {
+        console.log(myLessons, item);
+        const totalLesson = myLessons.filter(
+          (lesson) => lesson.course == item._id
+        ).length;
+        return totalLesson;
+      },
+    },
   ];
 
   const getCourseRegs = () => {
@@ -94,11 +98,13 @@ const Courses = () => {
   );
 
   const allLessons = useSelector((state) => state.myReducer.lessons);
-  const myLessons=allLessons.filter(lesson=>{
-    const isOfMyCourse=myCourses.filter(course=>course._id==lesson.course)
-    return isOfMyCourse
-  })
-  console.log("sll",myLessons);
+  const myLessons = allLessons.filter((lesson) => {
+    const isOfMyCourse = myCourses.filter(
+      (course) => course._id == lesson.course
+    );
+    return isOfMyCourse;
+  });
+  console.log("sll", myLessons);
 
   const [filteredCourses, setFilteredCourses] = useState(myCourses);
   const [filterBy, setFilterBy] = useState("title");
