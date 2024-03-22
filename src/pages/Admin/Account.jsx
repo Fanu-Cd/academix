@@ -7,9 +7,11 @@ import { PlusCircleFilled, UserOutlined } from "@ant-design/icons";
 import { fetcher } from "../../_services";
 import { setUsers } from "../../store/store";
 import { validateEmail, matchValues } from "../../_services";
+import API_URL from "../../apiUrl";
 
 const Account = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
+
   const dispatch = useDispatch();
   const users = useSelector((state) => state.myReducer.users);
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));

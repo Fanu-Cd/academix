@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { Button, Input, Popconfirm, Select, Timeline } from "antd";
 import { fetcher } from "../../_services";
 import { setCourseRegs } from "../../store/store";
+import API_URL from "../../apiUrl";
 
 const MyCourses = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
 
   const columns = [
     {
@@ -28,9 +29,18 @@ const MyCourses = () => {
       title: "My Status",
       render(item) {
         const courseReg = courseRegs.filter((cr) => cr.course == item._id)[0];
-        const {createdAt,updatedAt}=courseReg
-        const timeLapse=new Date(updatedAt).getDate()-new Date(createdAt).getDate()
-        return `${courseReg.status} ${courseReg.status=="finished"?'( in '+timeLapse+' '+(timeLapse>1?"days":"day ")+ ')':""}`;
+        const { createdAt, updatedAt } = courseReg;
+        const timeLapse =
+          new Date(updatedAt).getDate() - new Date(createdAt).getDate();
+        return `${courseReg.status} ${
+          courseReg.status == "finished"
+            ? "( in " +
+              timeLapse +
+              " " +
+              (timeLapse > 1 ? "days" : "day ") +
+              ")"
+            : ""
+        }`;
       },
     },
     {
@@ -71,7 +81,7 @@ const MyCourses = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        getCourseRegs()
+        getCourseRegs();
       })
       .catch((err) => {
         console.log("err", err);

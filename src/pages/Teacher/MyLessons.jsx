@@ -7,9 +7,10 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
+import API_URL from "../../apiUrl";
 
 const MyLessons = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
 
   const columns = [
     {

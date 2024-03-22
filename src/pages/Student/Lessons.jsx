@@ -2,9 +2,10 @@ import { useSelector } from "react-redux";
 import AntdTable from "../../components/AntdTable";
 import { useEffect, useState } from "react";
 import { Button, Input, Modal, Select } from "antd";
+import API_URL from "../../apiUrl";
 
 const Lessons = () => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
 
   const columns = [
     {
@@ -278,7 +279,9 @@ const Lessons = () => {
                 </ul>
               </div>
             ) : (
-              <small className="text-center text-danger">No Exam/Question Uploaded!</small>
+              <small className="text-center text-danger">
+                No Exam/Question Uploaded!
+              </small>
             )}
           </div>
         )}

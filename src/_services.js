@@ -1,3 +1,5 @@
+import API_URL from "./apiUrl";
+
 const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -8,7 +10,8 @@ const matchValues = (value1, value2) => {
 };
 
 const fetcher = (endpoint, method = "get", body) => {
-  const apiUrl = "http://localhost:3001";
+  const apiUrl = API_URL;
+
   if (method) {
     return fetch(`${apiUrl}/${endpoint}`, {
       method: method,
