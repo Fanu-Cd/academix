@@ -1,4 +1,4 @@
-const RENDER_API_URL = "https://academix-1.onrender.com";
+const RENDER_API_URL = "https://academix-backend-gkg2.onrender.com";
 const API_URL =
   process.env.NODE_ENV === "production"
     ? RENDER_API_URL
