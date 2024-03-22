@@ -17,6 +17,7 @@ const MyLessons = () => {
       render(item) {
         return (
           myCourses &&
+          myCourses.filter((course) => course._id == item.course)[0] &&
           myCourses.filter((course) => course._id == item.course)[0].title
         );
       },
@@ -48,14 +49,26 @@ const MyLessons = () => {
       title: "Actions",
       render(item) {
         return (
-          <Button
-            onClick={() => {
-              setShowViewModal(true);
-              setSelectedLesson(item);
-            }}
-          >
-            View
-          </Button>
+          <>
+            <Button
+              onClick={() => {
+                setShowViewModal(true);
+                setSelectedLesson(item);
+              }}
+              className="bg-success text-white"
+            >
+              View Lesson
+            </Button>
+            <Button
+              className="ms-2"
+              onClick={() => {
+                setShowViewExamModal(true);
+                setSelectedLesson(item);
+              }}
+            >
+              Exams & Questions
+            </Button>
+          </>
         );
       },
     },
@@ -73,10 +86,20 @@ const MyLessons = () => {
   const myLessons = allLessons
     ? allLessons.filter((lesson) => lesson.uploadedBy == currentUser._id)
     : [];
+
+  const allExams = useSelector((state) => state.myReducer.exams);
+  const myExams = allExams.filter((exam) => {
+    const isOfMyLesson =
+      myLessons.filter((lesson) => lesson._id == exam.lesson).length != 0;
+    return isOfMyLesson;
+  });
+  console.log("my Exams", myExams);
   const [filteredLessons, setFilteredLessons] = useState(myLessons);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showAddExamModal, setShowAddExamModal] = useState(false);
+  const [showViewExamModal, setShowViewExamModal] = useState(false);
   const [filterBy, setFilterBy] = useState("name");
   const [filterCondition, setFilterCondition] = useState("");
   const [newLesson, setNewLesson] = useState({
@@ -84,19 +107,35 @@ const MyLessons = () => {
     title: "",
     files: [],
   });
+  const [newExam, setNewExam] = useState({
+    title: "",
+    files: [],
+  });
   const [selectedLesson, setSelectedLesson] = useState(null);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e, type) => {
     const file = e.target.files;
-    const files = newLesson.files;
-    files.push(file);
-    setNewLesson({ ...newLesson, files: files });
+    if (type == "lesson") {
+      const files = newLesson.files;
+      files.push(file);
+      setNewLesson({ ...newLesson, files: files });
+    } else {
+      const files = newExam.files;
+      files.push(file);
+      setNewExam({ ...newExam, files: files });
+    }
   };
 
-  const handleRemoveFile = (fileToRemove) => {
-    const files = newLesson.files;
-    const filteredFiles = files.filter((file) => file != fileToRemove);
-    setNewLesson({ ...newLesson, files: filteredFiles });
+  const handleRemoveFile = (fileToRemove, type) => {
+    if (type == "lesson") {
+      const files = newLesson.files;
+      const filteredFiles = files.filter((file) => file != fileToRemove);
+      setNewLesson({ ...newLesson, files: filteredFiles });
+    } else {
+      const files = newExam.files;
+      const filteredFiles = files.filter((file) => file != fileToRemove);
+      setNewExam({ ...newExam, files: filteredFiles });
+    }
   };
 
   const handleSubmit = () => {
@@ -126,11 +165,34 @@ const MyLessons = () => {
       });
   };
 
+  const handleExamSubmit = () => {
+    const filePaths = newExam.files.map((file) => file[0].name);
+    const formData = new FormData();
+    newExam.files.map((file) => {
+      formData.append("files", file[0]);
+    });
+    formData.append("lesson", selectedLesson._id);
+    formData.append("title", newExam.title);
+    formData.append("filePaths", JSON.stringify(filePaths));
+    fetch(`${apiUrl}/upload-exam`, {
+      method: "post",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setNewExam({});
+        showAddExamModal(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
   const filterData = () => {
-    console.log(myLessons, filterBy, filterCondition);
     const filtered =
       filterBy == "name"
-        ? myLessons.filter((lesson) =>
+        ? myLessons &&
+          myLessons.filter((lesson) =>
             lesson.title.toLowerCase().includes(filterCondition.toLowerCase())
           )
         : myLessons.filter((lesson) => lesson.course == filterCondition);
@@ -138,7 +200,6 @@ const MyLessons = () => {
   };
 
   useEffect(() => {
-    console.log(myLessons, filterBy, filterCondition);
     if (!filterCondition) setFilteredLessons(myLessons);
     else filterData();
   }, [filterCondition]);
@@ -221,79 +282,83 @@ const MyLessons = () => {
         style={{ width: "80%" }}
         footer={[]}
       >
-        <div className="w-100 d-flex flex-column">
-          <label htmlFor="course">Select Course</label>
-          <Select
-            id="course"
-            value={newLesson.course}
-            onChange={(val) => {
-              setNewLesson({ ...newLesson, course: val });
-            }}
-          >
-            {myCourses.length > 0 &&
-              myCourses.map((course) => (
-                <Select.Option value={course._id}>{course.title}</Select.Option>
-              ))}
-          </Select>
-          <label htmlFor="course" className="mt-2">
-            Give your lesson a title
-          </label>
-          <Input
-            value={newLesson.title}
-            onChange={(e) => {
-              setNewLesson({ ...newLesson, title: e.target.value });
-            }}
-          />
-          <label className="mt-2">Attach Files</label>
-          <Button
-            onClick={() => {
-              document.getElementById("attachFile").click();
-            }}
-            style={{ maxWidth: "10rem" }}
-            icon={<UploadOutlined />}
-            className="bg-success text-white"
-          >
-            {newLesson.files.length > 0 ? "Add File" : "Upload"}
-          </Button>
+        {showViewModal && (
           <div className="w-100 d-flex flex-column">
-            <small>Uploaded Files :</small>
-            {newLesson.files.length > 0 ? (
-              <ul>
-                {newLesson.files.map((file) => (
-                  <li className="d-flex align-items-center">
-                    <p className="text-truncate m-0" style={{ width: "80%" }}>
-                      {file[0].name}
-                    </p>
-                    <Button
-                      onClick={() => handleRemoveFile(file)}
-                      type="text"
-                      className="text-danger ms-3 d-flex justify-content-center align-items-center"
-                    >
-                      <DeleteOutlined />
-                    </Button>
-                  </li>
+            <label htmlFor="course">Select Course</label>
+            <Select
+              id="course"
+              value={newLesson.course}
+              onChange={(val) => {
+                setNewLesson({ ...newLesson, course: val });
+              }}
+            >
+              {myCourses.length > 0 &&
+                myCourses.map((course) => (
+                  <Select.Option value={course._id}>
+                    {course.title}
+                  </Select.Option>
                 ))}
-              </ul>
-            ) : (
-              <p>No File Uploaded!</p>
-            )}
+            </Select>
+            <label htmlFor="course" className="mt-2">
+              Give your lesson a title
+            </label>
+            <Input
+              value={newLesson.title}
+              onChange={(e) => {
+                setNewLesson({ ...newLesson, title: e.target.value });
+              }}
+            />
+            <label className="mt-2">Attach Files</label>
+            <Button
+              onClick={() => {
+                document.getElementById("attachFile").click();
+              }}
+              style={{ maxWidth: "10rem" }}
+              icon={<UploadOutlined />}
+              className="bg-success text-white"
+            >
+              {newLesson.files.length > 0 ? "Add File" : "Upload"}
+            </Button>
+            <div className="w-100 d-flex flex-column">
+              <small>Uploaded Files :</small>
+              {newLesson.files.length > 0 ? (
+                <ul>
+                  {newLesson.files.map((file) => (
+                    <li className="d-flex align-items-center">
+                      <p className="text-truncate m-0" style={{ width: "80%" }}>
+                        {file[0].name}
+                      </p>
+                      <Button
+                        onClick={() => handleRemoveFile(file, "lesson")}
+                        type="text"
+                        className="text-danger ms-3 d-flex justify-content-center align-items-center"
+                      >
+                        <DeleteOutlined />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No File Uploaded!</p>
+              )}
+            </div>
+            <Button
+              onClick={(e) => handleSubmit(e, "lesson")}
+              type="primary"
+              className="mx-auto"
+              style={{ width: "40%" }}
+            >
+              Finish
+            </Button>
+            <input
+              id="attachFile"
+              onChange={handleFileChange}
+              hidden
+              type="file"
+              multiple
+            />
           </div>
-          <Button
-            onClick={handleSubmit}
-            type="primary"
-            className="mx-auto"
-            style={{ width: "40%" }}
-          >
-            Finish
-          </Button>
-          <input
-            id="attachFile"
-            onChange={handleFileChange}
-            hidden
-            type="file"
-            multiple
-          />
-        </div>
+        )}
       </Modal>
       <Modal
         open={showViewModal}
@@ -347,6 +412,166 @@ const MyLessons = () => {
                 ))}
             </li>
           </ul>
+        )}
+      </Modal>
+      <Modal
+        open={showAddExamModal}
+        maskClosable={false}
+        title="Add Exams and Questions"
+        onCancel={() => {
+          setShowAddExamModal(false);
+        }}
+        style={{ width: "80%" }}
+        footer={[]}
+      >
+        {showAddExamModal && (
+          <div className="w-100 d-flex flex-column">
+            <p className="m-0">
+              Selected Lesson : <b>{selectedLesson.title}</b>
+            </p>
+            <hr className="m-0" />
+            <label className="mt-2">Give a title for the Exam / Question</label>
+            <Input
+              value={newExam.title}
+              onChange={(e) => {
+                setNewExam({ ...newExam, title: e.target.value });
+              }}
+            />
+            <label className="mt-2">Attach Files</label>
+            <Button
+              onClick={() => {
+                document.getElementById("attachFile").click();
+              }}
+              style={{ maxWidth: "10rem" }}
+              icon={<UploadOutlined />}
+              className="bg-success text-white"
+            >
+              {newExam.files.length > 0 ? "Add File" : "Upload"}
+            </Button>
+            <div className="w-100 d-flex flex-column">
+              <small>Uploaded Files :</small>
+              {newExam.files.length > 0 ? (
+                <ul>
+                  {newExam.files.map((file) => (
+                    <li className="d-flex align-items-center">
+                      <p className="text-truncate m-0" style={{ width: "80%" }}>
+                        {file[0].name}
+                      </p>
+                      <Button
+                        onClick={() => handleRemoveFile(file, "exam")}
+                        type="text"
+                        className="text-danger ms-3 d-flex justify-content-center align-items-center"
+                      >
+                        <DeleteOutlined />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No File Uploaded!</p>
+              )}
+            </div>
+            <Button
+              onClick={(e) => handleExamSubmit(e, "exam")}
+              type="primary"
+              className="mx-auto"
+              style={{ width: "40%" }}
+            >
+              Finish
+            </Button>
+            <input
+              id="attachFile"
+              onChange={handleFileChange}
+              hidden
+              type="file"
+              multiple
+            />
+          </div>
+        )}
+      </Modal>
+      <Modal
+        open={showViewExamModal}
+        maskClosable={false}
+        title="View Exams and Questions"
+        onCancel={() => {
+          setShowViewExamModal(false);
+        }}
+        style={{ width: "80%" }}
+        footer={[]}
+      >
+        {showViewExamModal && (
+          <div className="w-100 d-flex flex-column">
+            {myExams.filter((exam) => exam.lesson == selectedLesson._id)
+              .length > 0 ? (
+              <div className="d-flex flex-column justify-content-center align-items-center w-100">
+                <Button
+                  icon={<PlusCircleFilled />}
+                  type="primary"
+                  style={{ minWidth: "5rem" }}
+                  onClick={() => {
+                    setShowViewExamModal(false);
+                    setShowAddExamModal(true);
+                  }}
+                >
+                  Add New Exam/Question
+                </Button>
+                <ul className="w-100">
+                  <li>Lesson Title : {selectedLesson.title}</li>
+
+                  <li>
+                    Exam Title :{" "}
+                    {
+                      myExams.filter(
+                        (exam) => exam.lesson == selectedLesson._id
+                      )[0].title
+                    }
+                  </li>
+                  <li>
+                    Uploaded in :{" "}
+                    {
+                      myExams
+                        .filter((exam) => exam.lesson == selectedLesson._id)[0]
+                        .createdAt.split("T")[0]
+                    }
+                  </li>
+                  <li>
+                    Attached Files :
+                    {selectedLesson.filePaths.length > 0 &&
+                      JSON.parse(selectedLesson.filePaths).map((file) => (
+                        <small className="d-block">
+                          {file}&nbsp;&nbsp;
+                          <a
+                            href={`${apiUrl}/uploads/${file}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download
+                          >
+                            Download
+                          </a>
+                        </small>
+                      ))}
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <div className="d-flex flex-column justify-content-center align-items-center w-100">
+                <Button
+                  icon={<PlusCircleFilled />}
+                  type="primary"
+                  style={{ minWidth: "5rem" }}
+                  onClick={() => {
+                    setShowViewExamModal(false);
+                    setShowAddExamModal(true);
+                  }}
+                >
+                  Add New Exam/Question
+                </Button>
+                <small className="mt-2">
+                  No Exam/Question uploaded for this Lesson
+                </small>
+              </div>
+            )}
+          </div>
         )}
       </Modal>
     </div>
