@@ -10,7 +10,14 @@ import UserLayout from "./pages/General/UserLayout";
 import Admin from "./pages/Admin/Admin";
 import { fetcher } from "./_services";
 import { useDispatch, UseDispatch, useSelector } from "react-redux";
-import { setCourses, setDepartments,setUsers,setLessons } from "./store/store";
+import {
+  setCourses,
+  setDepartments,
+  setUsers,
+  setLessons,
+  setCourseRegs,
+  setExams,
+} from "./store/store";
 import { useEffect } from "react";
 import AccountBanned from "./pages/General/AccountBanned";
 import WaitForApproval from "./pages/General/WaitForApproval";
@@ -76,7 +83,14 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  useEffect(()=>{getDepartments();getUsers();getCourses();getLessons()},[])
+  useEffect(() => {
+    getDepartments();
+    getUsers();
+    getCourses();
+    getLessons();
+    getCourseRegs();
+    getExams();
+  }, []);
 
   const dispatch = useDispatch();
   const getDepartments = () => {
@@ -90,7 +104,7 @@ function App() {
     });
   };
 
-  const getCourses= () => {
+  const getCourses = () => {
     fetcher("get-courses").then((res) => {
       const courses = res.result;
       dispatch(setCourses(courses));
@@ -108,6 +122,20 @@ function App() {
     fetcher("get-lessons").then((res) => {
       const lessons = res.result;
       dispatch(setLessons(lessons));
+    });
+  };
+
+  const getCourseRegs = () => {
+    fetcher("get-course-regs").then((res) => {
+      const regs = res.result;
+      dispatch(setCourseRegs(regs));
+    });
+  };
+
+  const getExams = () => {
+    fetcher("get-exams").then((res) => {
+      const exams = res.result;
+      dispatch(setExams(exams));
     });
   };
 
