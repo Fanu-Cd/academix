@@ -1,6 +1,6 @@
 import AntdTable from "../../components/AntdTable";
 import { useSelector, useDispatch } from "react-redux";
-import { renderStatus } from "../../_services";
+import { renderStatus, sendEmail } from "../../_services";
 import { Avatar, Button, Input, Modal, Select, message } from "antd";
 import { useEffect, useState } from "react";
 import { PlusCircleFilled, UserOutlined } from "@ant-design/icons";
@@ -107,6 +107,25 @@ const Account = () => {
   ];
 
   const updateAccount = (user, status) => {
+    const statusWord =
+      status == "active"
+        ? "Activated"
+        : status == "declined"
+        ? "Declined"
+        : "Deactivated";
+
+    const message = `${
+      statusWord == "active"
+        ? `Congratulations! Your account has been successfully ${statusWord}. You
+          can now enjoy our services.`
+        : `Your Account, has been ${statusWord} by your system administrator.`
+    }`;
+
+    const html = `
+    <h1>Your Account Has Been ${statusWord}</h1>
+    <p>${message}</p>
+    <p>If you have any questions, feel free to contact us.</p>`;
+
     const model = {
       account_status: status,
     };
@@ -117,11 +136,19 @@ const Account = () => {
       body: JSON.stringify(model),
     })
       .then((res) => res.json())
-      .then((res) => {
+      .then(async (res) => {
+        await sendEmail(
+          true,
+          html,
+          "Account Status Update",
+          "",
+          selectedUser.email
+        );
         getUsers();
         setShowManageModal(false);
       });
   };
+
 
   const getUsers = async () => {
     await fetcher("get-users").then((res) => {
