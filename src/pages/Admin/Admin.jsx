@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "./Dashboard";
 import Account from "./Account";
@@ -59,6 +59,15 @@ const Admin = () => {
   const handleMenuClick = ({ key }) => {
     setSelectedKey(key);
   };
+
+  const handleResize = () => {
+    if (window.innerWidth <= 800) setCollapsed(true);
+    else setCollapsed(false);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Layout className="w-100 bg-white" style={{ height: "100vh" }}>

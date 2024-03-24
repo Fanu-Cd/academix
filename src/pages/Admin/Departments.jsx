@@ -41,6 +41,7 @@ const Departments = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [filterBy, setFilterBy] = useState("name");
   const [filterCondition, setFilterCondition] = useState("");
+
   const departments = useSelector((state) => state.myReducer.departments);
   const courses = useSelector((state) => state.myReducer.courses);
   const initialDepts = departments;
@@ -155,7 +156,7 @@ const Departments = () => {
         className="mx-auto d-flex align-items-center justify-content-between p-2"
         style={{ minHeight: "2rem", maxWidth: "80%" }}
       >
-        <div style={{ width: "30%" }}>
+        <div style={{ maxWidth: "30%" }}>
           <Button
             onClick={() => {
               setShowAddModal(true);
@@ -167,27 +168,30 @@ const Departments = () => {
           </Button>
         </div>
 
-        <div className="d-flex justify-content-end" style={{ width: "50%" }}>
+        <div
+          className="d-flex flex-column flex-md-row justify-content-center justify-content-md-end"
+          style={{ maxWidth: "50%" }}
+        >
           <div
-            className="d-flex align-items-center"
-            style={{ minWidth: "5rem" }}
+            className="d-flex align-items-center justify-content-center"
+            style={{ maxWidth: "10rem" }}
           >
             <small>Filter By : </small>
             <Select
               value={filterBy}
-              className="ms-2"
               onChange={(val) => {
                 setFilterBy(val);
                 setFilteredDepts(initialDepts);
                 setFilterCondition("");
               }}
+              className="ms-2"
             >
               <Select.Option value="name">Name</Select.Option>
             </Select>
           </div>
           <div
-            className="d-flex align-items-center ms-2"
-            style={{ minWidth: "10rem" }}
+            className="d-flex align-items-center ms-2 mt-2 mt-md-0"
+            style={{ maxWidth: "10rem" }}
           >
             {filterBy == "name" && (
               <Input
@@ -223,13 +227,19 @@ const Departments = () => {
               </li>
               <li>
                 Courses :{" "}
-                {courses
-                  .filter((course) => course.department == selectedDept.value)
-                  .map((course) => (
-                    <small className="fw-bold">
-                      {course.title} &nbsp;,&nbsp;
-                    </small>
-                  ))}
+                {courses.filter(
+                  (course) => course.department == selectedDept.value
+                ).length > 0
+                  ? courses
+                      .filter(
+                        (course) => course.department == selectedDept.value
+                      )
+                      .map((course) => (
+                        <small className="fw-bold">
+                          {course.title} &nbsp;,&nbsp;
+                        </small>
+                      ))
+                  : "-"}
               </li>
             </ul>
             <div
@@ -297,27 +307,29 @@ const Departments = () => {
         footer={[]}
         maskClosable={false}
       >
-        <form onSubmit={(e) => handleSubmit(e, "Edit")}>
-          <label>Name</label>
-          <Input
-            name="name"
-            id="name"
-            value={input.name}
-            onChange={handleChange}
-            status={status.inputs.name}
-            required
-          />
+        {showEditModal && (
+          <form onSubmit={(e) => handleSubmit(e, "Edit")}>
+            <label>Name</label>
+            <Input
+              name="name"
+              id="name"
+              value={input.name}
+              onChange={handleChange}
+              status={status.inputs.name}
+              required
+            />
 
-          <Button
-            className="mx-auto d-block mt-2"
-            style={{ width: "10rem" }}
-            type="primary"
-            htmlType="submit"
-            disabled={selectedDept && selectedDept.name == input.name}
-          >
-            Save
-          </Button>
-        </form>
+            <Button
+              className="mx-auto d-block mt-2"
+              style={{ width: "10rem" }}
+              type="primary"
+              htmlType="submit"
+              disabled={selectedDept && selectedDept.name == input.name}
+            >
+              Save
+            </Button>
+          </form>
+        )}
       </Modal>
     </div>
   );

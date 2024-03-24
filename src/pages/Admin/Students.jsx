@@ -11,8 +11,9 @@ const Students = () => {
     {
       title: "Department",
       render(item) {
-        return departments.filter((dept) => dept.value == item.department)[0]
-          .name;
+        return departments
+          ? departments.filter((dept) => dept.value == item.department)[0].name
+          : "";
       },
     },
     {

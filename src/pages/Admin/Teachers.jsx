@@ -11,17 +11,18 @@ const Teachers = () => {
     {
       title: "Department",
       render(item) {
-        return departments.filter((dept) => dept.value == item.department)[0]
-          .name;
+        return departments
+          ? departments.filter((dept) => dept.value == item.department)[0].name
+          : "";
       },
     },
     {
       title: "Assigned Courses",
       render(item) {
-        const abcd = courses.filter((course) =>
+        const assignedCourses = courses.filter((course) =>
           course.teachers.includes(item._id)
         );
-        return abcd.map((ab) => (
+        return assignedCourses.map((ab) => (
           <small className="fw-bold">{ab.title}&nbsp;,&nbsp;</small>
         ));
       },

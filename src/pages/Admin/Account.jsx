@@ -60,8 +60,8 @@ const Account = () => {
     },
   });
 
-  // console.log("departments", departments);
-  // console.log("users", users);
+  console.log("departments", departments);
+  console.log("users", users);
   const columns = [
     {
       title: "Name",
@@ -260,7 +260,7 @@ const Account = () => {
         className="mx-auto d-flex align-items-center justify-content-between p-2"
         style={{ minHeight: "2rem", maxWidth: "80%" }}
       >
-        <div style={{ width: "30%" }}>
+        <div style={{ maxWidth: "30%" }}>
           <Button
             onClick={() => {
               setShowAddModal(true);
@@ -272,10 +272,10 @@ const Account = () => {
           </Button>
         </div>
 
-        <div className="d-flex justify-content-end" style={{ width: "60%" }}>
+        <div className="d-flex flex-column flex-md-row justify-content-center justify-content-md-end" style={{ maxWidth: "60%" }}>
           <div
-            className="d-flex align-items-center"
-            style={{ minWidth: "10rem" }}
+            className="d-flex align-items-center justify-content-center"
+            style={{ maxWidth: "10rem" }}
           >
             <small>Filter By : </small>
             <Select
@@ -296,8 +296,8 @@ const Account = () => {
             </Select>
           </div>
           <div
-            className="d-flex align-items-center ms-2"
-            style={{ minWidth: "10rem" }}
+            className="d-flex align-items-center ms-2 mt-2 mt-md-0"
+            style={{ maxWidth: "20rem" }}
           >
             {filterBy == "name" && (
               <Input
@@ -354,6 +354,7 @@ const Account = () => {
           </div>
         </div>
       </div>
+
       <AntdTable columns={columns} data={filteredUsers} width="80%" />
       <Modal
         open={showManageModal}

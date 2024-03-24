@@ -218,7 +218,7 @@ const Courses = () => {
         }
       })
       .catch((err) => {
-        console.log("err", err);
+        message.error("Some Error Occrred!");
       });
   };
 
@@ -229,7 +229,7 @@ const Courses = () => {
         className="mx-auto d-flex align-items-center justify-content-between p-2"
         style={{ minHeight: "2rem", maxWidth: "80%" }}
       >
-        <div style={{ width: "30%" }}>
+        <div style={{ maxWidth: "30%" }}>
           <Button
             onClick={() => {
               setShowAddModal(true);
@@ -241,10 +241,13 @@ const Courses = () => {
           </Button>
         </div>
 
-        <div className="d-flex justify-content-end" style={{ width: "50%" }}>
+        <div
+          className="d-flex flex-column flex-md-row justify-content-center justify-content-md-end"
+          style={{ maxWidth: "50%" }}
+        >
           <div
-            className="d-flex align-items-center"
-            style={{ minWidth: "5rem" }}
+            className="d-flex align-items-center justify-content-center"
+            style={{ maxWidth: "10rem" }}
           >
             <small>Filter By : </small>
             <Select
@@ -260,8 +263,8 @@ const Courses = () => {
             </Select>
           </div>
           <div
-            className="d-flex align-items-center ms-2"
-            style={{ minWidth: "10rem" }}
+            className="d-flex align-items-center ms-2 mt-2 mt-md-0"
+            style={{ maxWidth: "10rem" }}
           >
             {filterBy == "name" && (
               <Input
@@ -498,27 +501,29 @@ const Courses = () => {
         onOk={assignTeacherToCourse}
         okButtonProps={{ disabled: assignedTeachers.length == 0 }}
       >
-        <Select
-          onChange={(val) => {
-            !assignedTeachers.includes(val[val.length - 1]) &&
-              setAssignedTeachers([...assignedTeachers, val[val.length - 1]]);
-          }}
-          value={assignedTeachers}
-          mode="multiple"
-          style={{ width: "80%" }}
-          className="mx-auto d-block"
-          onDeselect={(v) => {
-            setAssignedTeachers(
-              assignedTeachers.filter((teacher) => teacher != v)
-            );
-          }}
-        >
-          {teachers.map((teacher, index) => (
-            <Select.Option key={index} value={teacher._id}>
-              {teacher.name}
-            </Select.Option>
-          ))}
-        </Select>
+        {showAssignModal && (
+          <Select
+            onChange={(val) => {
+              !assignedTeachers.includes(val[val.length - 1]) &&
+                setAssignedTeachers([...assignedTeachers, val[val.length - 1]]);
+            }}
+            value={assignedTeachers}
+            mode="multiple"
+            style={{ width: "80%" }}
+            className="mx-auto d-block"
+            onDeselect={(v) => {
+              setAssignedTeachers(
+                assignedTeachers.filter((teacher) => teacher != v)
+              );
+            }}
+          >
+            {teachers.map((teacher, index) => (
+              <Select.Option key={index} value={teacher._id}>
+                {teacher.name}
+              </Select.Option>
+            ))}
+          </Select>
+        )}
       </Modal>
     </div>
   );

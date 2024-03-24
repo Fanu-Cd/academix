@@ -1,6 +1,7 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Input, Modal, message } from "antd";
 import { useState } from "react";
+import { sendEmail } from "../../_services";
 import API_URL from "../../apiUrl";
 
 const Me = () => {
@@ -55,10 +56,11 @@ const Me = () => {
       body: JSON.stringify(input),
     })
       .then((res) => res.json())
-      .then((res) => {
+      .then(async (res) => {
         let userInfo = JSON.parse(localStorage.getItem("currentUser"));
         userInfo.password = input.newPassword;
         localStorage.setItem("currentUser", JSON.stringify(userInfo));
+        await sendSuccessMessage();
         message.success("Password Changed Successfully!");
         setShowPWModal(false);
       })
@@ -80,6 +82,22 @@ const Me = () => {
       .then((res) => {
         return res;
       });
+  };
+
+  const sendSuccessMessage = async () => {
+    let userInfo = JSON.parse(localStorage.getItem("currentUser"));
+
+    const html = `
+    <p>You have successfully changed your password!</p>
+    <p>If you have any questions, feel free to contact us.</p>`;
+
+    await sendEmail(
+      true,
+      html,
+      "Password Changed Successfully!",
+      "",
+      userInfo.email
+    );
   };
 
   const userInfo = JSON.parse(localStorage.getItem("currentUser"));
