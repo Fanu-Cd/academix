@@ -9,7 +9,7 @@ import AccountNotVerifiedPage from "./pages/General/AccountNotVerified";
 import UserLayout from "./pages/General/UserLayout";
 import Admin from "./pages/Admin/Admin";
 import { fetcher } from "./_services";
-import { useDispatch, UseDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   setCourses,
   setDepartments,
@@ -18,14 +18,14 @@ import {
   setCourseRegs,
   setExams,
 } from "./store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AccountBanned from "./pages/General/AccountBanned";
 import WaitForApproval from "./pages/General/WaitForApproval";
 import Teacher from "./pages/Teacher/Teacher";
 import Student from "./pages/Student/Student";
-import API_URL from "./apiUrl";
 import ForgotPassword from "./components/Account/ForgotPassword";
 import ChangePassword from "./components/Account/ChangePassword";
+import { message } from "antd";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -94,8 +94,9 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const [error, setError] = useState(false);
+
   useEffect(() => {
-    console.log("environment, apiUrl", process.env.NODE_ENV, API_URL);
     getDepartments();
     getUsers();
     getCourses();
@@ -104,51 +105,85 @@ function App() {
     getExams();
   }, []);
 
+  useEffect(() => {
+    if (error) message.error("Fetching Data Error !");
+  }, [error]);
+
   const dispatch = useDispatch();
   const getDepartments = () => {
-    fetcher("get-departments").then((res) => {
-      const depts = res.result;
-      const departments = [];
-      depts.map((dept) =>
-        departments.push({ name: dept.title, value: dept._id })
-      );
-      dispatch(setDepartments(departments));
-    });
+    fetcher("get-departments")
+      .then((res) => {
+        const depts = res.result;
+        const departments = [];
+        depts.map((dept) =>
+          departments.push({ name: dept.title, value: dept._id })
+        );
+        dispatch(setDepartments(departments));
+      })
+      .catch((err) => {
+        console.log("FETCH DEPTS ERROR", err);
+        setError(true);
+      });
   };
 
   const getCourses = () => {
-    fetcher("get-courses").then((res) => {
-      const courses = res.result;
-      dispatch(setCourses(courses));
-    });
+    fetcher("get-courses")
+      .then((res) => {
+        const courses = res.result;
+        dispatch(setCourses(courses));
+      })
+      .catch((err) => {
+        console.log("FETCH COURSES ERROR", err);
+        setError(true);
+      });
   };
 
   const getUsers = () => {
-    fetcher("get-users").then((res) => {
-      const users = res.result;
-      dispatch(setUsers(users));
-    });
+    fetcher("get-users")
+      .then((res) => {
+        const users = res.result;
+        dispatch(setUsers(users));
+      })
+      .catch((err) => {
+        console.log("FETCH USERS ERROR", err);
+        setError(true);
+      });
   };
 
   const getLessons = () => {
-    fetcher("get-lessons").then((res) => {
-      const lessons = res.result;
-      dispatch(setLessons(lessons));
-    });
+    fetcher("get-lessons")
+      .then((res) => {
+        const lessons = res.result;
+        dispatch(setLessons(lessons));
+      })
+      .catch((err) => {
+        console.log("FETCH LESSONS ERROR", err);
+        setError(true);
+      });
   };
 
   const getCourseRegs = () => {
-    fetcher("get-course-regs").then((res) => {
-      const regs = res.result;
-      dispatch(setCourseRegs(regs));
-    });
+    fetcher("get-course-regs")
+      .then((res) => {
+        const regs = res.result;
+        dispatch(setCourseRegs(regs));
+      })
+      .catch((err) => {
+        console.log("FETCH COURSEREGS ERROR", err);
+        setError(true);
+      });
   };
 
   const getExams = () => {
-    fetcher("get-exams").then((res) => {
-      const exams = res.result;
-      dispatch(setExams(exams));
-    });
+    fetcher("get-exams")
+      .then((res) => {
+        const exams = res.result;
+        dispatch(setExams(exams));
+      })
+      .catch((err) => {
+        console.log("FETCH EXAMS ERROR", err);
+        setError(true);
+      });
   };
 
   return <RouterProvider router={router} />;
