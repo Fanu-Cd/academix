@@ -38,7 +38,7 @@ const LandingPage = () => {
     >
       {/* NAVIGATION */}
       <nav
-        className="navbar navbar-expand-md navbar-light d-md-flex justify-content-between align-items-center mx-auto"
+        className="navbar navbar-expand-md navbar-light d-md-flex justify-content-md-between align-items-md-center mx-auto"
         style={{ width: "95%" }}
       >
         <a className="navbar-brand" href="/#">
@@ -57,17 +57,22 @@ const LandingPage = () => {
         </button>
 
         <div
-          className="collapse navbar-collapse d-md-flex justify-content-between align-items-center"
+          className="collapse navbar-collapse d-md-flex flex-md-row flex-column justify-content-md-between justify-content-center align-items-center mx-auto mx-md-0 p-2 p-md-0"
           id="navbarSupportedContent"
           style={{ maxWidth: "80%" }}
         >
           <ul
-            className="navbar-nav mr-auto d-flex justify-content-between"
+            className="navbar-nav mr-auto d-flex justify-content-md-between justify-content-center align-items-center align-items-md-left"
             style={{ width: "40%" }}
           >
             <li className="nav-item">
               <a className="nav-link" href="/#">
                 Home
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/#">
+                Courses
               </a>
             </li>
             <li className="nav-item">
@@ -82,13 +87,14 @@ const LandingPage = () => {
             </li>
           </ul>
           <div style={{ width: "30%" }}>
-            <Input.Search placeholder="Search" style={{ width: "100%" }} />
+            <Input.Search placeholder="Search" style={{ width: "100%" }} size="large" />
           </div>
-          <Link to="/account/login" style={{ width: "25%" }}>
+          <Link to="/account/login" style={{ width: "25%" }} className="h-auto">
             <Button
-              style={{ width: "100%", height: "2.5rem" }}
+              style={{ width: "100%", minHeight: "2.5rem" }}
               type="primary"
               icon={<UserOutlined />}
+              className="mt-2 mt-md-0 text-wrap h-auto"
             >
               Login / Sign Up
             </Button>
@@ -101,7 +107,10 @@ const LandingPage = () => {
         style={{ minHeight: "30rem", marginTop: "5rem" }}
       >
         <div className="w-100 row p-0" style={{ minHeight: "inherit" }}>
-          <div className="col-md-6 col-sm-12 d-flex flex-column align-items-center justify-content-center">
+          <div
+            className="col-md-6 col-sm-12 d-flex flex-column align-items-center justify-content-center"
+            style={{ borderLeft: "5px solid purple" }}
+          >
             <h4 className="motto text-center">
               The Best Learning Platform For Enhancing Skills
             </h4>
@@ -130,13 +139,23 @@ const LandingPage = () => {
       </div>
       {/* QUALITIES */}
       <div
-        className="w-100 mt-5 d-flex justify-content-between align-items-center qualities"
+        className="w-100 mt-5 row g-2 g-md-0 align-items-center qualities"
         style={{ minHeight: "5rem" }}
       >
-        <Button icon={<FaHandPointUp color="blue" />}>User-Friendly</Button>
-        <Button icon={<GrGrow color="green" />}>Scalable</Button>
-        <Button icon={<IoGlobe color="red" />}>Accessible from anywhere</Button>
-        <Button icon={<IoIosSpeedometer color="brown" />}>Fast Speed</Button>
+        <div className="col-6 col-md-3">
+          <Button icon={<FaHandPointUp color="blue" />}>User-Friendly</Button>
+        </div>
+        <div className="col-6 col-md-3">
+          <Button icon={<GrGrow color="green" />}>Scalable</Button>
+        </div>
+        <div className="col-6 col-md-3">
+          <Button icon={<IoGlobe color="red" />}>
+            Accessible from anywhere
+          </Button>
+        </div>
+        <div className="col-6 col-md-3">
+          <Button icon={<IoIosSpeedometer color="brown" />}>Fast Speed</Button>
+        </div>
       </div>
       {/* SERVICES */}
       <div className="w-100 mt-5" style={{ minHeight: "20rem" }}>
@@ -201,7 +220,7 @@ const LandingPage = () => {
               <li>User Management</li>
               <li>Course Creation and Organization</li>
               <li>Data Analytics and Reporting</li>
-              <li>Content ManagementR</li>
+              <li>Content Management</li>
             </ul>
           </div>
         </div>
