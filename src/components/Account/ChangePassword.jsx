@@ -2,7 +2,8 @@ import { Button, Input, Result, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../apiUrl";
-import { generateCode, matchValues, sendEmail } from "../../_services";
+import { matchValues, sendEmail } from "../../_services";
+import Footer from "../Footer";
 
 const ChangePassword = () => {
   const apiUrl = API_URL;
@@ -107,86 +108,89 @@ const ChangePassword = () => {
   };
 
   return (
-    <div
-      className="d-flex flex-column justify-content-center align-items-center mx-auto border rounded shadow p-3"
-      style={{ width: "60%" }}
-    >
-      {tokenValid === "" && (
-        <div
-          className="d-flex flex-column justify-content-center align-items-center"
-          style={{ minHeight: "15rem" }}
-        >
-          <small>Please Wait...</small>
-          <Spin className="mt-2" />
-        </div>
-      )}
-
-      {tokenValid === false && (
-        <div className="w-100 d-flex flex-column justify-content-center align-items-center">
-          <Result status="error" title="Token Expired!" />
-        </div>
-      )}
-
-      {tokenValid && (
-        <div className="w-100 d-flex flex-column justify-content-center align-items-center">
-          <h3 className="fw-bold">Change Password</h3>
-          <form
-            onSubmit={handleSubmit}
+    <>
+      <div
+        className="d-flex flex-column justify-content-center align-items-center mx-auto border rounded shadow p-3"
+        style={{ width: "60%" }}
+      >
+        {tokenValid === "" && (
+          <div
             className="d-flex flex-column justify-content-center align-items-center"
-            style={{ width: "90%" }}
+            style={{ minHeight: "15rem" }}
           >
-            <label htmlFor="email" className="w-100 mt-2 d-block">
-              Email
-            </label>
-            <Input
-              style={{ height: "2.5rem" }}
-              className="half-black"
-              placeholder="Email"
-              name="email"
-              id="email"
-              value={input.email}
-              onChange={handleChange}
-              status={status.inputs.email}
-              required
-              disabled
-            />
-            <label htmlFor="password" className="w-100 mt-2 d-block">
-              Create New Password
-            </label>
-            <Input.Password
-              style={{ height: "2.5rem" }}
-              className="half-black"
-              placeholder="New Password"
-              name="password"
-              id="password"
-              value={input.password}
-              onChange={handleChange}
-              status={status.inputs.password}
-              required
-              minLength="8"
-            />
-            <label htmlFor="cpassword" className="w-100 mt-2 d-block">
-              Confirm Password
-            </label>
-            <Input.Password
-              style={{ height: "2.5rem" }}
-              className="half-black"
-              placeholder="New Password"
-              name="cpassword"
-              id="cpassword"
-              value={input.cpassword}
-              onChange={handleChange}
-              status={status.inputs.cpassword}
-              required
-              minLength="8"
-            />
-            <Button htmlType="submit" type="primary" className="mt-2">
-              Submit
-            </Button>
-          </form>
-        </div>
-      )}
-    </div>
+            <small>Please Wait...</small>
+            <Spin className="mt-2" />
+          </div>
+        )}
+
+        {tokenValid === false && (
+          <div className="w-100 d-flex flex-column justify-content-center align-items-center">
+            <Result status="error" title="Token Expired!" />
+          </div>
+        )}
+
+        {tokenValid && (
+          <div className="w-100 d-flex flex-column justify-content-center align-items-center">
+            <h3 className="fw-bold">Change Password</h3>
+            <form
+              onSubmit={handleSubmit}
+              className="d-flex flex-column justify-content-center align-items-center"
+              style={{ width: "90%" }}
+            >
+              <label htmlFor="email" className="w-100 mt-2 d-block">
+                Email
+              </label>
+              <Input
+                style={{ height: "2.5rem" }}
+                className="half-black"
+                placeholder="Email"
+                name="email"
+                id="email"
+                value={input.email}
+                onChange={handleChange}
+                status={status.inputs.email}
+                required
+                disabled
+              />
+              <label htmlFor="password" className="w-100 mt-2 d-block">
+                Create New Password
+              </label>
+              <Input.Password
+                style={{ height: "2.5rem" }}
+                className="half-black"
+                placeholder="New Password"
+                name="password"
+                id="password"
+                value={input.password}
+                onChange={handleChange}
+                status={status.inputs.password}
+                required
+                minLength="8"
+              />
+              <label htmlFor="cpassword" className="w-100 mt-2 d-block">
+                Confirm Password
+              </label>
+              <Input.Password
+                style={{ height: "2.5rem" }}
+                className="half-black"
+                placeholder="New Password"
+                name="cpassword"
+                id="cpassword"
+                value={input.cpassword}
+                onChange={handleChange}
+                status={status.inputs.cpassword}
+                required
+                minLength="8"
+              />
+              <Button htmlType="submit" type="primary" className="mt-2">
+                Submit
+              </Button>
+            </form>
+          </div>
+        )}
+      </div>
+      <Footer mt="15rem" />
+    </>
   );
 };
 
