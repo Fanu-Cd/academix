@@ -1,12 +1,15 @@
 const mongoose = require("mongoose"); // Mongoose for communicating with mongoDB
 const express = require("express");
 const bodyParser = require("body-parser");
+const nodemailer = require("nodemailer");
 const port = 3001;
 const app = express();
 const cors = require("cors");
 const User = require("./models/user");
 const Department = require("./models/department");
 const Course = require("./models/course");
+const Token = require("./models/token");
+
 const CourseRegistration = require("./models/course-registration");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -18,6 +21,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 const mongodburl = process.env.MONGODB_URL;
+const nodeMailEmail = process.env.NODE_MAILER_EMAIL;
+const nodeMailPW = process.env.NODE_MAILER_PW;
+const { google } = require("googleapis");
+const { v4: uuidv4 } = require("uuid");
+const OAuth2 = google.auth.OAuth2;
 mongoose
   .connect(mongodburl, {
     useNewUrlParser: true,
@@ -30,6 +38,8 @@ mongoose
     console.error("MongoDB connection error:", error);
   });
 
+/*UTILITIES */
+
 const storage = multer.diskStorage({
   destination: "./uploads/",
   filename: function (req, file, cb) {
@@ -41,6 +51,7 @@ const upload = multer({
   storage: storage,
 }).array("files", 10);
 
+/*   API ROUTES    */
 app.post("/create-account", (req, response) => {
   const { name, email, password, grade, department, role } = req.body;
   bcrypt
@@ -61,6 +72,120 @@ app.post("/create-account", (req, response) => {
         .catch((err) => response.json({ error: err }));
     })
     .catch((err) => response.json({ error: err }));
+});
+
+app.post("/send-email", (req, response) => {
+  const { isHtml, to, subject, html, text } = req.body;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Status Update</title>
+<style>
+*{
+  box-sizing:border-box;
+}
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border:1px solid black;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  h1 {
+    color: #333;
+    text-align: center;
+  }
+  p {
+    color: #666;
+    line-height: 1.6;
+  }
+  .button {
+    display: block;
+    width:10rem;
+    padding: 10px 20px;
+    background-color: darkslategray;
+    color: white;
+    border-radius: 5px;
+    margin: 20px auto;
+  }
+  .link{
+    text-decoration: none;
+    color:white !important;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    ${html ? html : ""}
+    <button class="button">
+    <a class="link" noreferrer target='_blank' noopener href=${
+      process.env.NODE_ENV === "production"
+        ? "https://academix-1.onrender.com/"
+        : "http://localhost:3000"
+    }>Visit Our Website</a>
+    </button>
+  </div>
+</body>
+</html>
+`;
+
+  const oauth2Client = new OAuth2(
+    process.env.NODE_MAILER_CLIENT_ID,
+    process.env.NODE_MAILER_CLIENT_SECRET,
+    "https://developers.google.com/oauthplayground"
+  );
+
+  oauth2Client.setCredentials({
+    refresh_token: process.env.NODE_MAILER_REFRESH_TOKEN,
+  });
+
+  const accessToken = new Promise((resolve, reject) => {
+    oauth2Client.getAccessToken((err, token) => {
+      if (err) {
+        response.json({ error: err });
+      }
+    });
+  });
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: process.env.NODE_MAILER_EMAIL,
+      accessToken,
+      clientId: process.env.NODE_MAILER_CLIENT_ID,
+      clientSecret: process.env.NODE_MAILER_CLIENT_SECRET,
+      refreshToken: process.env.NODE_MAILER_REFRESH_TOKEN,
+    },
+  });
+
+  const mailOptions = {
+    from: '"Fanuel Amare from AcademiX "<fanu7.dev@gmail.com>',
+    to: to,
+    subject: subject,
+    text: isHtml ? "" : text,
+    html: isHtml ? htmlContent : "",
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      response.json({ error: error });
+    } else {
+      response.json({ result: info.response });
+    }
+  });
 });
 
 app.post("/change-password/:id", (req, response) => {
@@ -337,7 +462,7 @@ app.post("/register-for-course", (req, response) => {
 });
 
 app.post("/update-course-reg/:id", (req, response) => {
-  const {id} = req.params
+  const { id } = req.params;
   const { status } = req.body;
   CourseRegistration.findByIdAndUpdate(id, { status: status })
     .then((res) => response.json({ result: res }))
@@ -377,6 +502,37 @@ app.post("/upload-exam", (req, response) => {
         response.json({ error: err });
       });
   });
+});
+
+app.get("/generate-token", (req, response) => {
+  const uuid = uuidv4();
+  const token = new Token({ token: uuid });
+  token
+    .save()
+    .then((res) => {
+      response.json({ result: res });
+    })
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.get("/verify-token/:token", (req, response) => {
+  const { token } = req.params;
+  Token.findOne({ token: token, status: "active" })
+    .then((res) => response.json({ result: res }))
+    .catch((err) => response.json({ error: err }));
+});
+
+app.get("/deactivate-token/:token", (req, response) => {
+  const token = req.params.token;
+  Token.findOneAndDelete({ token: token })
+    .then((res) => {
+      response.json({ result: res });
+    })
+    .catch((err) => {
+      response.json({ error: err });
+    });
 });
 
 //Methods

@@ -24,6 +24,8 @@ import WaitForApproval from "./pages/General/WaitForApproval";
 import Teacher from "./pages/Teacher/Teacher";
 import Student from "./pages/Student/Student";
 import API_URL from "./apiUrl";
+import ForgotPassword from "./components/Account/ForgotPassword";
+import ChangePassword from "./components/Account/ChangePassword";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -46,6 +48,14 @@ const router = createBrowserRouter([
           {
             path: "login",
             element: <Login />,
+          },
+          {
+            path: "forgot-password",
+            element: <ForgotPassword />,
+          },
+          {
+            path: "change-password",
+            element: <ChangePassword />,
           },
           {
             path: "account-not-verified",

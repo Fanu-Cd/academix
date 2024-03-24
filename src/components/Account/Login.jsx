@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { validateEmail } from "../../_services";
 import API_URL from "../../apiUrl";
 const Login = () => {
-  const apiUrl = API_URL
+  const apiUrl = API_URL;
   const navigate = useNavigate();
   const [input, setInput] = useState({
     email: "",
@@ -98,6 +98,18 @@ const Login = () => {
       });
   };
 
+  const forgotPassword = (e) => {
+    fetch(`${apiUrl}/generate-token`)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("res", res);
+        navigate(`/account/forgot-password?email=${input.email}&token=${res.result.token}`)
+      })
+      .catch((err) => {
+        console.log("Error", err);
+      });
+  };
+
   const userExists = localStorage.getItem("currentUser");
   useEffect(() => {
     if (userExists) navigate("/");
@@ -144,11 +156,17 @@ const Login = () => {
               required
               minLength="8"
             />
-            <Link to="/" className="text-decoration-none mt-3">
-              Forgot your password?
-            </Link>
             <Button
-              className="rounded-button mt-3 text-white"
+              type="text"
+              className="mt-3"
+              onClick={() => {
+                forgotPassword();
+              }}
+            >
+              Forgot your password?
+            </Button>
+            <Button
+              className="rounded-button mt-2 text-white"
               style={{ width: "45%", height: "2.5rem", background: "tomato" }}
               htmlType="submit"
             >

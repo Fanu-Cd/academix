@@ -1,4 +1,5 @@
 import API_URL from "./apiUrl";
+const apiUrl = API_URL;
 
 const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,6 +26,22 @@ const fetcher = (endpoint, method = "get", body) => {
   }
 };
 
+const sendEmail = (isHtml, html, subject, text, to) => {
+  const email = {
+    isHtml: isHtml,
+    html: html,
+    subject: subject,
+    text: "",
+    to: to,
+  };
+
+  return fetch(`${apiUrl}/send-email`, {
+    method: "post",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(email),
+  });
+};
+
 const renderStatus = (status) => {
   if (status == "not-approved" || status == "banned" || status == "declined") {
     return (
@@ -45,4 +62,25 @@ const arrayFilter = (data, field, value) => {
   return data.filter((dt) => dt[field] == value);
 };
 
-export { validateEmail, matchValues, fetcher, renderStatus, arrayFilter };
+function generateCode(length) {
+  const chars = "0123456789";
+  const charsLength = chars.length;
+
+  let code = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charsLength);
+    code += chars.charAt(randomIndex);
+  }
+
+  return code;
+}
+
+export {
+  validateEmail,
+  matchValues,
+  fetcher,
+  renderStatus,
+  arrayFilter,
+  sendEmail,
+  generateCode,
+};
