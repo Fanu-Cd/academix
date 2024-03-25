@@ -33,17 +33,21 @@ const MyCourses = () => {
   const [filterBy, setFilterBy] = useState("title");
   const [filterCondition, setFilterCondition] = useState("");
 
-  const myLessons = allLessons
-    ? allLessons.filter((lesson) => lesson.uploadedBy == currentUser._id)
-    : [];
+  const myLessons = allLessons.filter(
+    (lesson) => lesson.uploadedBy == currentUser._id
+  );
   console.log(myCourses);
 
   const filterData = () => {
     console.log(myCourses, filterBy, filterCondition);
     const filtered =
       filterBy == "title"
-        ? myCourses.filter((course) => course.title.toLowerCase().includes(filterCondition.toLowerCase()))
-        : myCourses.filter((course) => course.id.toLowerCase().includes(filterCondition.toLowerCase()));
+        ? myCourses.filter((course) =>
+            course.title.toLowerCase().includes(filterCondition.toLowerCase())
+          )
+        : myCourses.filter((course) =>
+            course.id.toLowerCase().includes(filterCondition.toLowerCase())
+          );
     setFilteredCourses(filtered);
   };
 
@@ -59,10 +63,13 @@ const MyCourses = () => {
         className="mx-auto d-flex align-items-center justify-content-end p-2"
         style={{ minHeight: "2rem", maxWidth: "80%" }}
       >
-        <div className="d-flex justify-content-end" style={{ width: "50%" }}>
+        <div
+          className="d-flex flex-column flex-md-row justify-content-center justify-content-md-end"
+          style={{ maxWidth: "50%" }}
+        >
           <div
-            className="d-flex align-items-center"
-            style={{ minWidth: "5rem" }}
+            className="d-flex align-items-center justify-content-center"
+            style={{ maxWidth: "10rem" }}
           >
             <small>Filter By : </small>
             <Select
@@ -78,8 +85,8 @@ const MyCourses = () => {
             </Select>
           </div>
           <div
-            className="d-flex align-items-center ms-2"
-            style={{ minWidth: "10rem" }}
+            className="d-flex align-items-center ms-2 mt-2 mt-md-0"
+            style={{ maxWidth: "10rem" }}
           >
             <Input
               onChange={(e) => {

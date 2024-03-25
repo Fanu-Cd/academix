@@ -17,6 +17,13 @@ const StudentDashboard = () => {
     return isInMyCourseRegs;
   });
 
+  const allLessons = useSelector((state) => state.myReducer.lessons);
+  const myLessons = allLessons.filter((lesson) => {
+    const isOfMyCourse =
+      myFinalCourses.filter((course) => course._id == lesson.course).length > 0;
+    return isOfMyCourse;
+  });
+
   return (
     <div className="w-100 bg-light" style={{ height: "100%" }}>
       <div className="w-100">
@@ -27,7 +34,7 @@ const StudentDashboard = () => {
                 <BookOutlined className="fs-3" />
               </div>
               <h5 className="text-center">My Courses</h5>
-              <h3 className="text-center">{myFinalCourses && myFinalCourses.length}</h3>
+              <h3 className="text-center">{myFinalCourses.length}</h3>
             </Card>
           </Col>
           <Col span={12}>
@@ -36,7 +43,7 @@ const StudentDashboard = () => {
                 <FaPencilAlt className="fs-3" />
               </div>
               <h5 className="text-center">My Lessons</h5>
-              <h3 className="text-center">{"0"}</h3>
+              <h3 className="text-center">{myLessons.length}</h3>
             </Card>
           </Col>
         </Row>

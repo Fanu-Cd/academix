@@ -33,7 +33,7 @@ const AdminDashboard = () => {
       <div className="w-100 p-3">
         <h4>Total Data</h4>
         <Row className="w-100" gutter="2">
-          <Col span={6}>
+          <Col xs={12} md={6}>
             <Card className="d-flex flex-column justify-content-center align-items-center">
               <div className="text-center">
                 <UserOutlined className="fs-3" />
@@ -42,7 +42,7 @@ const AdminDashboard = () => {
               <h3 className="text-center">{totalUsers}</h3>
             </Card>
           </Col>
-          <Col span={6}>
+          <Col xs={12} md={6}>
             <Card className="d-flex flex-column justify-content-center align-items-center">
               <div className="text-center">
                 <ReadOutlined className="fs-3" />
@@ -51,8 +51,8 @@ const AdminDashboard = () => {
               <h3 className="text-center">{totalTeachers}</h3>
             </Card>
           </Col>
-          <Col span={6}>
-            <Card className="d-flex flex-column justify-content-center align-items-center w-50 mx-auto">
+          <Col xs={12} md={6}>
+            <Card className="d-flex flex-column justify-content-center align-items-center">
               <div className="text-center">
                 <MdPeople className="fs-3" />
               </div>
@@ -61,7 +61,7 @@ const AdminDashboard = () => {
             </Card>
           </Col>
 
-          <Col span={6}>
+          <Col xs={12} md={6}>
             <Card className="d-flex flex-column justify-content-center align-items-center">
               <div className="text-center">
                 <MdGroups className="fs-3" />
@@ -81,25 +81,25 @@ const AdminDashboard = () => {
           </Col>
         </Row>
       </div>
-      <div className="w-100 mt-5 p-3" style={{ minHeight: "10rem" }}>
+      <div className="w-100 mt-1 mt-md-5 p-3" style={{ minHeight: "10rem" }}>
         <h4>Users</h4>
         <Row className="mt-3" gutter={"5"}>
-          <Col span={6}>
+          <Col xs={12} md={6}>
             <Card title="Active" className="text-center">
               <h3 className="m-0">{activeUsers}</h3>
             </Card>
           </Col>
-          <Col span={6}>
+          <Col xs={12} md={6}>
             <Card title="Not Approved" className="text-center">
               <h3 className="m-0">{notApprovedUsers}</h3>
             </Card>
           </Col>
-          <Col span={6}>
+          <Col xs={12} md={6}>
             <Card title="Banned" className="text-center">
               <h3 className="m-0">{bannedUsers}</h3>
             </Card>
           </Col>
-          <Col span={6}>
+          <Col xs={12} md={6}>
             <Card
               title={<p className="m-0 text-danger">Deleted</p>}
               className="text-center"

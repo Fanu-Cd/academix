@@ -3,6 +3,7 @@ import { Avatar, Button, Input, Modal, message } from "antd";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import API_URL from "../../apiUrl";
+import { sendEmail } from "../../_services";
 
 const Me = () => {
   const apiUrl = API_URL;
@@ -74,10 +75,11 @@ const Me = () => {
       body: JSON.stringify(input),
     })
       .then((res) => res.json())
-      .then((res) => {
+      .then(async (res) => {
         let userInfo = JSON.parse(localStorage.getItem("currentUser"));
         userInfo.password = input.newPassword;
         localStorage.setItem("currentUser", JSON.stringify(userInfo));
+        await sendSuccessMessage();
         message.success("Password Changed Successfully!");
         setShowPWModal(false);
       })
@@ -101,6 +103,22 @@ const Me = () => {
       });
   };
 
+  const sendSuccessMessage = async () => {
+    let userInfo = JSON.parse(localStorage.getItem("currentUser"));
+
+    const html = `
+    <p>You have successfully changed your password!</p>
+    <p>If you have any questions, feel free to contact us.</p>`;
+
+    await sendEmail(
+      true,
+      html,
+      "Password Changed Successfully!",
+      "",
+      userInfo.email
+    );
+  };
+
   const userInfo = JSON.parse(localStorage.getItem("currentUser"));
   console.log("userInfo", userInfo);
   return (
@@ -117,7 +135,7 @@ const Me = () => {
           <li>School : {userInfo.school}</li>
           <li>
             Department :{" "}
-            {departments &&
+            {departments.length > 0 &&
               departments.filter(
                 (dept) => dept.value == userInfo.department
               )[0] &&
@@ -155,42 +173,44 @@ const Me = () => {
           setShowPWModal(false);
         }}
       >
-        <form onSubmit={handleSubmit}>
-          <label>Current Password</label>
-          <Input.Password
-            value={input.oldPassword}
-            name="oldPassword"
-            onChange={handleChange}
-            required
-            minLength="8"
-            status={status.inputs.oldPassword}
-          />
-          <label className="mt-2">New Password</label>
-          <Input.Password
-            value={input.newPassword}
-            name="newPassword"
-            onChange={handleChange}
-            required
-            minLength="8"
-            status={status.inputs.newPassword}
-          />
-          <label className="mt-2">Confirm New Password</label>
-          <Input.Password
-            value={input.cNewPassword}
-            name="cNewPassword"
-            onChange={handleChange}
-            required
-            minLength="8"
-            status={status.inputs.cNewPassword}
-          />
-          <Button
-            htmlType="submit"
-            type="primary"
-            className="mt-2 d-block mx-auto"
-          >
-            Submit
-          </Button>
-        </form>
+        {showPWModal && (
+          <form onSubmit={handleSubmit}>
+            <label>Current Password</label>
+            <Input.Password
+              value={input.oldPassword}
+              name="oldPassword"
+              onChange={handleChange}
+              required
+              minLength="8"
+              status={status.inputs.oldPassword}
+            />
+            <label className="mt-2">New Password</label>
+            <Input.Password
+              value={input.newPassword}
+              name="newPassword"
+              onChange={handleChange}
+              required
+              minLength="8"
+              status={status.inputs.newPassword}
+            />
+            <label className="mt-2">Confirm New Password</label>
+            <Input.Password
+              value={input.cNewPassword}
+              name="cNewPassword"
+              onChange={handleChange}
+              required
+              minLength="8"
+              status={status.inputs.cNewPassword}
+            />
+            <Button
+              htmlType="submit"
+              type="primary"
+              className="mt-2 d-block mx-auto"
+            >
+              Submit
+            </Button>
+          </form>
+        )}
       </Modal>
       <Modal
         open={showProfileModal}

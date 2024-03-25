@@ -17,8 +17,7 @@ const MyLessons = () => {
       title: "Course Name",
       render(item) {
         return (
-          myCourses &&
-          myCourses.filter((course) => course._id == item.course)[0] &&
+          myCourses.length > 0 &&
           myCourses.filter((course) => course._id == item.course)[0].title
         );
       },
@@ -27,7 +26,7 @@ const MyLessons = () => {
       title: "Course ID",
       render(item) {
         return (
-          myCourses &&
+          myCourses.length > 0 &&
           myCourses.filter((course) => course._id == item.course)[0].id
         );
       },
@@ -80,13 +79,13 @@ const MyLessons = () => {
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-  const myCourses = allCourses
-    ? allCourses.filter((course) => course.teachers.includes(currentUser._id))
-    : [];
+  const myCourses = allCourses.filter((course) =>
+    course.teachers.includes(currentUser._id)
+  );
 
-  const myLessons = allLessons
-    ? allLessons.filter((lesson) => lesson.uploadedBy == currentUser._id)
-    : [];
+  const myLessons = allLessons.filter(
+    (lesson) => lesson.uploadedBy == currentUser._id
+  );
 
   const allExams = useSelector((state) => state.myReducer.exams);
   const myExams = allExams.filter((exam) => {
@@ -212,7 +211,7 @@ const MyLessons = () => {
         className="mx-auto d-flex align-items-center justify-content-between p-2"
         style={{ minHeight: "2rem", maxWidth: "80%" }}
       >
-        <div style={{ width: "30%" }}>
+        <div style={{ maxWidth: "30%" }}>
           <Button
             onClick={() => {
               setShowAddModal(true);
@@ -224,10 +223,13 @@ const MyLessons = () => {
           </Button>
         </div>
 
-        <div className="d-flex justify-content-end" style={{ width: "50%" }}>
+        <div
+          className="d-flex flex-column flex-md-row justify-content-center justify-content-md-end"
+          style={{ maxWidth: "50%" }}
+        >
           <div
-            className="d-flex align-items-center"
-            style={{ minWidth: "5rem" }}
+            className="d-flex align-items-center justify-content-center"
+            style={{ maxWidth: "10rem" }}
           >
             <small>Filter By : </small>
             <Select
@@ -243,8 +245,8 @@ const MyLessons = () => {
             </Select>
           </div>
           <div
-            className="d-flex align-items-center ms-2"
-            style={{ minWidth: "10rem" }}
+            className="d-flex align-items-center ms-2 mt-2 mt-md-0"
+            style={{ maxWidth: "10rem" }}
           >
             {filterBy == "name" && (
               <Input

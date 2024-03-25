@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TeacherDashboard from "./Dashboard";
 import {
@@ -46,6 +46,15 @@ const Teacher = () => {
   const handleMenuClick = ({ key }) => {
     setSelectedKey(key);
   };
+
+  const handleResize = () => {
+    if (window.innerWidth <= 800) setCollapsed(true);
+    else setCollapsed(false);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Layout className="w-100 bg-white" style={{ height: "100vh" }}>
@@ -108,6 +117,7 @@ const Teacher = () => {
               onConfirm={() => {
                 localStorage.removeItem("currentUser");
                 navigate("/");
+                window.location.reload();
               }}
             >
               <Button className="float-right text-danger" icon={<MdLogout />}>

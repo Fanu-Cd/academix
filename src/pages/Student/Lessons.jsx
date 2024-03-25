@@ -17,8 +17,7 @@ const Lessons = () => {
       render(item) {
         console.log("item", item, myFinalCourses);
         const name =
-          myFinalCourses &&
-          myFinalCourses.filter((course) => course._id == item.course)[0]
+          myFinalCourses.length > 0
             ? myFinalCourses.filter((course) => course._id == item.course)[0]
                 .title
             : "";
@@ -29,8 +28,7 @@ const Lessons = () => {
       title: "Course ID",
       render(item) {
         const id =
-          myFinalCourses &&
-          myFinalCourses.filter((course) => course._id == item.course)[0]
+          myFinalCourses.length > 0
             ? myFinalCourses.filter((course) => course._id == item.course)[0].id
             : "";
         return id;
