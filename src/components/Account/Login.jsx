@@ -38,27 +38,12 @@ const Login = () => {
         } else {
           message.success("Log in Successfull!");
 
-          switch (res.result.role) {
-            case "admin":
-              localStorage.setItem("currentUser", JSON.stringify(res.result));
-              setTimeout(() => {
-                navigate("/me/admin");
-              }, 500);
-              break;
-            case "teacher":
-              localStorage.setItem("currentUser", JSON.stringify(res.result));
-              setTimeout(() => {
-                navigate("/me/teacher");
-              }, 500);
-              break;
-            case "student":
-              localStorage.setItem("currentUser", JSON.stringify(res.result));
-              setTimeout(() => {
-                navigate("/me/student");
-              }, 500);
-              break;
-            default:
-            //
+          if (res.result.role) {
+            localStorage.setItem("currentUser", JSON.stringify(res.result));
+            setTimeout(() => {
+              navigate("/me/home");
+              window.location.reload();
+            }, 500);
           }
         }
       } else {
@@ -103,19 +88,16 @@ const Login = () => {
       .then((res) => res.json())
       .then((res) => {
         console.log("res", res);
-        navigate(`/account/forgot-password?email=${input.email}&token=${res.result.token}`)
+        navigate(
+          `/account/forgot-password?email=${input.email}&token=${res.result.token}`
+        );
       })
       .catch((err) => {
         console.log("Error", err);
       });
   };
 
-  const userExists = localStorage.getItem("currentUser");
-  useEffect(() => {
-    if (userExists) navigate("/");
-  }, []);
-
-  return !userExists ? (
+  return (
     <>
       <div
         className="d-flex flex-column justify-content-center align-items-center mx-auto border rounded shadow p-3"
@@ -193,8 +175,6 @@ const Login = () => {
       </div>
       <Footer mt="7rem" />
     </>
-  ) : (
-    ""
   );
 };
 

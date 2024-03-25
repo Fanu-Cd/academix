@@ -144,6 +144,7 @@ const Admin = () => {
               onConfirm={() => {
                 localStorage.removeItem("currentUser");
                 navigate("/");
+                window.location.reload();
               }}
             >
               <Button className="float-right text-danger" icon={<MdLogout />}>

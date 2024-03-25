@@ -16,18 +16,7 @@ const LandingPage = () => {
   const user = JSON.parse(localStorage.getItem("currentUser"));
   useEffect(() => {
     if (user) {
-      switch (user.role) {
-        case "admin":
-          navigate("/me/admin");
-          break;
-        case "teacher":
-          navigate("/me/teacher");
-          break;
-        case "student":
-          navigate("/me/student");
-          break;
-        default:
-      }
+      navigate("/me/home");
     }
   }, []);
 
@@ -87,7 +76,11 @@ const LandingPage = () => {
             </li>
           </ul>
           <div style={{ width: "30%" }}>
-            <Input.Search placeholder="Search" style={{ width: "100%" }} size="large" />
+            <Input.Search
+              placeholder="Search"
+              style={{ width: "100%" }}
+              size="large"
+            />
           </div>
           <Link to="/account/login" style={{ width: "25%" }} className="h-auto">
             <Button

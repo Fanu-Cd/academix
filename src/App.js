@@ -26,6 +26,20 @@ import Student from "./pages/Student/Student";
 import ForgotPassword from "./components/Account/ForgotPassword";
 import ChangePassword from "./components/Account/ChangePassword";
 import { message } from "antd";
+import { useNavigate } from "react-router-dom";
+const user = JSON.parse(localStorage.getItem("currentUser"));
+const userRedirect = <LandingPage />;
+const userRouter = () => {
+  switch (user.role) {
+    case "admin":
+      return <Admin />;
+    case "teacher":
+      return <Teacher />;
+    case "student":
+      return <Student />;
+    default:
+  }
+};
 const router = createBrowserRouter([
   {
     path: "/",
@@ -43,31 +57,31 @@ const router = createBrowserRouter([
         children: [
           {
             path: "signup",
-            element: <Signup />,
+            element: user ? userRedirect : <Signup />,
           },
           {
             path: "login",
-            element: <Login />,
+            element: user ? userRedirect : <Login />,
           },
           {
             path: "forgot-password",
-            element: <ForgotPassword />,
+            element: user ? userRedirect : <ForgotPassword />,
           },
           {
             path: "change-password",
-            element: <ChangePassword />,
+            element: user ? userRedirect : <ChangePassword />,
           },
           {
             path: "account-not-verified",
-            element: <AccountNotVerifiedPage />,
+            element: user ? userRedirect : <AccountNotVerifiedPage />,
           },
           {
             path: "account-banned",
-            element: <AccountBanned />,
+            element: user ? userRedirect : <AccountBanned />,
           },
           {
             path: "wait-for-approval",
-            element: <WaitForApproval />,
+            element: user ? userRedirect : <WaitForApproval />,
           },
         ],
       },
@@ -76,16 +90,8 @@ const router = createBrowserRouter([
         element: <UserLayout />,
         children: [
           {
-            path: "admin",
-            element: <Admin />,
-          },
-          {
-            path: "teacher",
-            element: <Teacher />,
-          },
-          {
-            path: "student",
-            element: <Student />,
+            path: "home",
+            element: user ? userRouter() : <LandingPage />,
           },
         ],
       },

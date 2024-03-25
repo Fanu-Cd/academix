@@ -124,16 +124,11 @@ const Signup = () => {
     return valid;
   };
 
-  const userExists = localStorage.getItem("currentUser");
-  useEffect(() => {
-    if (userExists) navigate("/");
-  }, []);
-
   useEffect(() => {
     getDepartments();
   }, []);
 
-  return !userExists ? (
+  return (
     <>
       <div
         className="d-flex flex-column justify-content-center align-items-center inherit-br-right mx-auto border rounded p-3"
@@ -287,8 +282,6 @@ const Signup = () => {
       </div>
       <Footer mt="6rem" />
     </>
-  ) : (
-    ""
   );
 };
 
