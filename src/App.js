@@ -26,7 +26,6 @@ import Student from "./pages/Student/Student";
 import ForgotPassword from "./components/Account/ForgotPassword";
 import ChangePassword from "./components/Account/ChangePassword";
 import { message } from "antd";
-import { useNavigate } from "react-router-dom";
 const user = JSON.parse(localStorage.getItem("currentUser"));
 const userRedirect = <LandingPage />;
 const userRouter = () => {

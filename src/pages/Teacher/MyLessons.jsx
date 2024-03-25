@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Select } from "antd";
+import { Button, Input, Modal, Select, message } from "antd";
 import AntdTable from "../../components/AntdTable";
 import { useEffect, useState } from "react";
 import {
@@ -76,6 +76,11 @@ const MyLessons = () => {
 
   const allCourses = useSelector((state) => state.myReducer.courses);
   const allLessons = useSelector((state) => state.myReducer.lessons);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (error) message.error("Fetching Data Error !");
+  }, [error]);
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -161,7 +166,8 @@ const MyLessons = () => {
         showAddModal(false);
       })
       .catch((err) => {
-        console.log("err", err);
+        console.log("error", err);
+        setError(true);
       });
   };
 
@@ -184,7 +190,8 @@ const MyLessons = () => {
         showAddExamModal(false);
       })
       .catch((err) => {
-        console.log("err", err);
+        console.log("error", err);
+        setError(true);
       });
   };
 

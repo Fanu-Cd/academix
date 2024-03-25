@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { PlusCircleFilled } from "@ant-design/icons";
 import { fetcher } from "../../_services";
-import { setCourses, setDepartments } from "../../store/store";
+import { setCourses } from "../../store/store";
 import { useDispatch } from "react-redux";
 import API_URL from "../../apiUrl";
 const Courses = () => {

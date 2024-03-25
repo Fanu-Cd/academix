@@ -9,7 +9,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, theme, Popconfirm } from "antd";
-import { MdAccountCircle, MdLogout } from "react-icons/md";
+import { MdLogout } from "react-icons/md";
 import { FaPencilAlt } from "react-icons/fa";
 import MyCourses from "./MyCourses";
 import MyLessons from "./MyLessons";
