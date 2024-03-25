@@ -13,7 +13,7 @@ import { MdLogout } from "react-icons/md";
 import { FaPencilAlt } from "react-icons/fa";
 import MyCourses from "./MyCourses";
 import MyLessons from "./MyLessons";
-import Me from "./Me";
+import Me from "../../common/Me";
 const { Header, Sider, Content } = Layout;
 
 const Teacher = () => {

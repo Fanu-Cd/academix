@@ -1,9 +1,9 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Input, Modal, message } from "antd";
 import { useState } from "react";
+import { sendEmail, validateEmail } from "../_services"
+import API_URL from "../apiUrl"
 import { useSelector } from "react-redux";
-import API_URL from "../../apiUrl";
-import { sendEmail } from "../../_services";
 
 const Me = () => {
   const apiUrl = API_URL;
@@ -12,6 +12,7 @@ const Me = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [input, setInput] = useState({});
   const [status, setStatus] = useState({ inputs: {} });
+  const departments = useSelector((state) => state.myReducer.departments);
 
   const allCourses = useSelector((state) => state.myReducer.courses);
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -28,23 +29,45 @@ const Me = () => {
     return isInMyCourseRegs;
   });
 
-  const departments = useSelector((state) => state.myReducer.departments);
-  console.log(departments);
   const handleChange = (e) => {
     setStatus({ ...status, inputs: {} });
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, type) => {
     e.preventDefault();
-    validateInput().then((res) => {
-      if (!res) return;
-      changePassword();
-    });
+    if (type == "password") {
+      validatePwInput().then((res) => {
+        if (!res) return;
+        changePassword();
+      });
+    } else {
+      if (input.email != userInfo.email && !validateEmail(input.email)) {
+        setStatus({ ...status, inputs: { email: "error" } });
+      } else {
+        if (input.email != userInfo.email) {
+          fetch(`${apiUrl}/filterUserByEmail`, {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: input.email }),
+          })
+            .then((res) => res.json())
+            .then((res) => {
+              if (res.result.length>0) {
+                setStatus({ ...status, inputs: { email: "error" } });
+              } else {
+                changeProfile();
+              }
+            });
+        } else {
+          changeProfile();
+        }
+      }
+    }
   };
 
-  const validateInput = () => {
+  const validatePwInput = () => {
     let valid = true;
     return checkCredentials().then((res) => {
       if (res && res.result) {
@@ -88,6 +111,26 @@ const Me = () => {
       });
   };
 
+  const changeProfile = () => {
+    fetch(`${apiUrl}/change-profile/${userInfo._id}`, {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    })
+      .then((res) => res.json())
+      .then(async (res) => {
+        let userInfo = JSON.parse(localStorage.getItem("currentUser"));
+        userInfo.name = input.name;
+        userInfo.email = input.email;
+        localStorage.setItem("currentUser", JSON.stringify(userInfo));
+        message.success("Profile Changed Successfully!");
+        setShowProfileModal(false);
+      })
+      .catch((err) => {
+        message.error("Some Error Occurred!");
+      });
+  };
+
   const checkCredentials = () => {
     return fetch(`${apiUrl}/checkCredentials`, {
       method: "post",
@@ -120,7 +163,7 @@ const Me = () => {
   };
 
   const userInfo = JSON.parse(localStorage.getItem("currentUser"));
-  console.log("userInfo", userInfo);
+  console.log(userInfo);
   return (
     <div className="w-100">
       <h5 className="text-center">Me</h5>
@@ -133,16 +176,21 @@ const Me = () => {
           <li>Name : {userInfo.name}</li>
           <li>Email : {userInfo.email}</li>
           <li>School : {userInfo.school}</li>
-          <li>
-            Department :{" "}
-            {departments.length > 0 &&
-              departments.filter(
-                (dept) => dept.value == userInfo.department
-              )[0] &&
-              departments.filter((dept) => dept.value == userInfo.department)[0]
-                .name}
-          </li>
-          <li>Courses Registered : {myFinalCourses.length}</li>
+          {(userInfo.role == "student" || userInfo.role == "teacher") && (
+            <li>
+              Department :{" "}
+              {departments.length > 0 &&
+                departments.filter(
+                  (dept) => dept.value == userInfo.department
+                )[0] &&
+                departments.filter(
+                  (dept) => dept.value == userInfo.department
+                )[0].name}
+              {userInfo.role == "student" && (
+                <li>Courses Registered : {myFinalCourses.length}</li>
+              )}
+            </li>
+          )}
         </ul>
         <div className="d-flex justify-content-between align-items-center">
           <Button
@@ -156,6 +204,8 @@ const Me = () => {
           <Button
             onClick={() => {
               setShowProfileModal(true);
+              const user = { name: userInfo.name, email: userInfo.email };
+              setInput(user);
             }}
             className="ms-3"
           >
@@ -174,7 +224,7 @@ const Me = () => {
         }}
       >
         {showPWModal && (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => handleSubmit(e, "password")}>
             <label>Current Password</label>
             <Input.Password
               value={input.oldPassword}
@@ -215,11 +265,44 @@ const Me = () => {
       <Modal
         open={showProfileModal}
         title="Change Profile"
+        footer={[]}
         onCancel={() => {
           setShowProfileModal(false);
         }}
         maskClosable={false}
-      ></Modal>
+      >
+        {showProfileModal && (
+          <form onSubmit={(e) => handleSubmit(e, "profile")}>
+            <label>Name</label>
+            <Input
+              value={input.name}
+              name="name"
+              onChange={handleChange}
+              required
+              status={status.inputs.name}
+            />
+            <label className="mt-2">Email</label>
+            <Input
+              type="email"
+              value={input.email}
+              name="email"
+              onChange={handleChange}
+              required
+              status={status.inputs.email}
+            />
+            <Button
+              htmlType="submit"
+              type="primary"
+              className="mt-2 d-block mx-auto"
+              disabled={
+                input.email == userInfo.email && input.name == userInfo.name
+              }
+            >
+              Submit
+            </Button>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 };

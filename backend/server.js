@@ -206,6 +206,18 @@ app.post("/change-password/:id", (req, response) => {
     .catch((err) => response.json({ error: err }));
 });
 
+app.post("/change-profile/:id", (req, response) => {
+  const uid = req.params.id;
+  const { name,email } = req.body;
+      User.findByIdAndUpdate(uid, { name: name,email:email })
+        .then((res) => {
+          response.json({ result: res });
+        })
+        .catch((err) => {
+          response.json({ error: err });
+        });
+})
+
 app.post("/update-user/:id", (req, response) => {
   const { account_status } = req.body;
   const id = req.params.id;

@@ -17,7 +17,7 @@ import Departments from "./Departments";
 import Courses from "./Courses";
 import Teachers from "./Teachers";
 import Students from "./Students";
-import Me from "./Me";
+import Me from "../../common/Me";
 const { Header, Sider, Content } = Layout;
 
 const Admin = () => {
@@ -46,11 +46,12 @@ const Admin = () => {
       content = <Students />;
       break;
     case "6":
-      content = <Me />;
-      break;
-    case "7":
       content = <Account />;
       break;
+    case "7":
+      content = <Me />;
+      break;
+
     default:
       content = <div>default content</div>;
       break;
@@ -103,15 +104,16 @@ const Admin = () => {
               icon: <MdPeople />,
               label: "Students",
             },
+
             {
               key: "6",
-              icon: <UserOutlined />,
-              label: "Me",
+              icon: <SettingFilled />,
+              label: "Manage Accounts",
             },
             {
               key: "7",
-              icon: <SettingFilled />,
-              label: "Manage Accounts",
+              icon: <UserOutlined />,
+              label: "Me",
             },
           ]}
           onClick={handleMenuClick}
