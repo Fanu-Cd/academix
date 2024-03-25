@@ -61,7 +61,6 @@ const Courses = () => {
   const [filterCondition, setFilterCondition] = useState("");
   const departments = useSelector((state) => state.myReducer.departments);
   const courses = useSelector((state) => state.myReducer.courses);
-  console.log("courses", courses);
   const initialCourses = courses;
   const [filteredCourses, setFilteredCourses] = useState(courses);
   const teachers = useSelector((state) => state.myReducer.users).filter(
@@ -76,11 +75,18 @@ const Courses = () => {
   });
 
   const filterData = () => {
-    const filtered = initialCourses.filter((course) =>
-      filterBy !== "name"
-        ? course[filterBy] == filterCondition
-        : course["title"].toLowerCase().includes(filterCondition.toLowerCase())
-    );
+    const filtered = initialCourses.filter((course) => {
+      console.log(filterBy, filterCondition, course);
+      const result =
+        filterBy !== "name" && filterBy !== "id"
+          ? course[filterBy] == filterCondition
+          : filterBy == "name"
+          ? course["title"]
+              .toLowerCase()
+              .includes(filterCondition.toLowerCase())
+          : course["id"].toLowerCase().includes(filterCondition.toLowerCase());
+      return result;
+    });
     setFilteredCourses(filtered);
   };
 
@@ -260,6 +266,9 @@ const Courses = () => {
               }}
             >
               <Select.Option value="name">Name</Select.Option>
+              <Select.Option value="id">Course ID</Select.Option>
+              <Select.Option value="department">Department</Select.Option>
+              <Select.Option value="status">Status</Select.Option>
             </Select>
           </div>
           <div
@@ -273,6 +282,40 @@ const Courses = () => {
                 }}
                 value={filterCondition}
               />
+            )}
+            {filterBy == "id" && (
+              <Input
+                onChange={(e) => {
+                  setFilterCondition(e.target.value);
+                }}
+                value={filterCondition}
+              />
+            )}
+            {filterBy == "department" && (
+              <Select
+                value={filterCondition}
+                onChange={(val) => {
+                  setFilterCondition(val);
+                }}
+              >
+                {departments.map((department) => (
+                  <Select.Option value={department.value}>
+                    {department.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            )}
+
+            {filterBy == "status" && (
+              <Select
+                value={filterCondition}
+                onChange={(val) => {
+                  setFilterCondition(val);
+                }}
+              >
+                <Select.Option value={"active"}>active</Select.Option>
+                <Select.Option value={"not-active"}>not-active</Select.Option>
+              </Select>
             )}
           </div>
         </div>

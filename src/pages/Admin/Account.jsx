@@ -370,7 +370,6 @@ const Account = () => {
             <ul className="mt-2" style={{ width: "60%" }}>
               <li>Name : {selectedUser.name}</li>
               <li>Email : {selectedUser.email}</li>
-              <li>Password : {selectedUser.password}</li>
               <li>
                 Department :{" "}
                 {selectedUser.department
