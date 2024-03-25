@@ -1,13 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import AntdTable from "../../components/AntdTable";
 import { useEffect, useState } from "react";
-import { Button, Input, Popconfirm, Select, Timeline } from "antd";
+import { Button, Input, Popconfirm, Select, message } from "antd";
 import { fetcher } from "../../_services";
 import { setCourseRegs } from "../../store/store";
 import API_URL from "../../apiUrl";
 
 const MyCourses = () => {
   const apiUrl = API_URL;
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    if (error) message.error("Fetching Data Error !");
+  }, [error]);
 
   const columns = [
     {
@@ -84,7 +88,8 @@ const MyCourses = () => {
         getCourseRegs();
       })
       .catch((err) => {
-        console.log("err", err);
+        console.log("error", err);
+        setError(true);
       });
   };
 

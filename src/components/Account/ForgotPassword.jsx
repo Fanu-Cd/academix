@@ -1,4 +1,4 @@
-import { Button, Input, Result, Spin } from "antd";
+import { Button, Input, Result, Spin, message } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../apiUrl";
@@ -10,6 +10,7 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const email = new URL(window.location.href).searchParams.get("email");
   const token = new URL(window.location.href).searchParams.get("token");
+  const [error, setError] = useState(false);
 
   const [input, setInput] = useState({ email: "" });
   const [status, setStatus] = useState({
@@ -28,6 +29,10 @@ const ForgotPassword = () => {
     verifyToken(token);
   }, []);
 
+  useEffect(() => {
+    if (error) message.error("Fetching Data Error !");
+  }, [error]);
+
   const verifyToken = (token) => {
     fetch(`${apiUrl}/verify-token/${token}`)
       .then((res) => res.json())
@@ -41,6 +46,7 @@ const ForgotPassword = () => {
       })
       .catch((err) => {
         console.log("error", err);
+        setError(true);
       });
   };
 
@@ -130,6 +136,7 @@ const ForgotPassword = () => {
       })
       .catch((err) => {
         console.log("error", err);
+        setError(true);
       });
   };
 

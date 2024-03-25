@@ -11,6 +11,11 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (error) message.error("Fetching Data Error !");
+  }, [error]);
 
   const [status, setStatus] = useState({
     inputs: {
@@ -22,37 +27,42 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateInput()) return;
-    checkCredentials().then((res) => {
-      if (res && res.result) {
-        //login success, redirect to pages
-        if (res.result.account_status == "not-approved") {
-          message.success("Log in Successfull!");
-          setTimeout(() => {
-            navigate("/account/account-not-verified");
-          }, 500);
-        } else if (res.result.account_status == "banned") {
-          message.success("Log in Successfull!");
-          setTimeout(() => {
-            navigate("/account/account-banned");
-          }, 500);
-        } else {
-          message.success("Log in Successfull!");
-
-          if (res.result.role) {
-            localStorage.setItem("currentUser", JSON.stringify(res.result));
+    checkCredentials()
+      .then((res) => {
+        if (res && res.result) {
+          //login success, redirect to pages
+          if (res.result.account_status == "not-approved") {
+            message.success("Log in Successfull!");
             setTimeout(() => {
-              navigate("/me/home");
-              window.location.reload();
+              navigate("/account/account-not-verified");
             }, 500);
+          } else if (res.result.account_status == "banned") {
+            message.success("Log in Successfull!");
+            setTimeout(() => {
+              navigate("/account/account-banned");
+            }, 500);
+          } else {
+            message.success("Log in Successfull!");
+
+            if (res.result.role) {
+              localStorage.setItem("currentUser", JSON.stringify(res.result));
+              setTimeout(() => {
+                navigate("/me/home");
+                window.location.reload();
+              }, 500);
+            }
           }
+        } else {
+          setStatus({
+            ...status,
+            inputs: { ...status.inputs, password: "error", email: "error" },
+          });
         }
-      } else {
-        setStatus({
-          ...status,
-          inputs: { ...status.inputs, password: "error", email: "error" },
-        });
-      }
-    });
+      })
+      .catch((err) => {
+        console.log("error", err);
+        setError(true);
+      });
   };
 
   const handleChange = (e) => {
@@ -80,7 +90,8 @@ const Login = () => {
       .then((res) => res.json())
       .then((res) => {
         return res;
-      });
+      })
+      .catch((err) => null);
   };
 
   const forgotPassword = (e) => {
@@ -93,7 +104,8 @@ const Login = () => {
         );
       })
       .catch((err) => {
-        console.log("Error", err);
+        console.log("error", err);
+        setError(true);
       });
   };
 
