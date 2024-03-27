@@ -9,6 +9,8 @@ const myReducer = createSlice({
     lessons: [],
     courseRegs: [],
     exams: [],
+    studentActivities: [],
+    studentNotes: [],
   },
   reducers: {
     setUsers: (state, action) => {
@@ -29,6 +31,12 @@ const myReducer = createSlice({
     setExams: (state, action) => {
       state.exams = action.payload;
     },
+    setStudentActivities: (state, action) => {
+      state.studentActivities = action.payload;
+    },
+    setStudentNotes: (state, action) => {
+      state.studentNotes = action.payload;
+    },
   },
 });
 
@@ -44,6 +52,8 @@ export const {
   setCourses,
   setLessons,
   setCourseRegs,
-  setExams
+  setExams,
+  setStudentNotes,
+  setStudentActivities,
 } = myReducer.actions;
 export default store;

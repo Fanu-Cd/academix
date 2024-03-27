@@ -9,12 +9,13 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, theme, Popconfirm } from "antd";
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdOutlineAnalytics } from "react-icons/md";
 import { FaBookOpen, FaPencilAlt } from "react-icons/fa";
 import Me from "../../common/Me";
 import Courses from "./Courses";
 import MyCourses from "./MyCourses";
 import Lessons from "./Lessons";
+import MyActivity from "./MyActivity";
 const { Header, Sider, Content } = Layout;
 
 const Student = () => {
@@ -40,6 +41,9 @@ const Student = () => {
       content = <Lessons />;
       break;
     case "5":
+      content = <MyActivity />;
+      break;
+    case "6":
       content = <Me />;
       break;
     default:
@@ -91,6 +95,11 @@ const Student = () => {
             },
             {
               key: "5",
+              icon: <MdOutlineAnalytics />,
+              label: "My Activity",
+            },
+            {
+              key: "6",
               icon: <UserOutlined />,
               label: "Me",
             },

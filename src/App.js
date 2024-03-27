@@ -17,6 +17,8 @@ import {
   setLessons,
   setCourseRegs,
   setExams,
+  setStudentActivities,
+  setStudentNotes,
 } from "./store/store";
 import { useEffect, useState } from "react";
 import AccountBanned from "./pages/General/AccountBanned";
@@ -108,6 +110,8 @@ function App() {
     getLessons();
     getCourseRegs();
     getExams();
+    getStudentActivities();
+    getStudentNotes();
   }, []);
 
   useEffect(() => {
@@ -187,6 +191,30 @@ function App() {
       })
       .catch((err) => {
         console.log("FETCH EXAMS ERROR", err);
+        setError(true);
+      });
+  };
+
+  const getStudentActivities = () => {
+    fetcher("get-all-student-activities")
+      .then((res) => {
+        const activities = res.result;
+        dispatch(setStudentActivities(activities));
+      })
+      .catch((err) => {
+        console.log("FETCH ACTIVITIES ERROR", err);
+        setError(true);
+      });
+  };
+
+  const getStudentNotes = () => {
+    fetcher("get-all-student-notes")
+      .then((res) => {
+        const notes = res.result;
+        dispatch(setStudentNotes(notes));
+      })
+      .catch((err) => {
+        console.log("FETCH ACTIVITIES ERROR", err);
         setError(true);
       });
   };

@@ -14,17 +14,16 @@ const CourseRegistration = require("./models/course-registration");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const multer = require("multer");
-const path = require("path");
 const Lesson = require("./models/lesson");
 const Exam = require("./models/exam");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 const mongodburl = process.env.MONGODB_URL;
-const nodeMailEmail = process.env.NODE_MAILER_EMAIL;
-const nodeMailPW = process.env.NODE_MAILER_PW;
 const { google } = require("googleapis");
 const { v4: uuidv4 } = require("uuid");
+const StudentActivity = require("./models/student-activity");
+const StudentNote = require("./models/student-notes");
 const OAuth2 = google.auth.OAuth2;
 mongoose
   .connect(mongodburl, {
@@ -208,15 +207,15 @@ app.post("/change-password/:id", (req, response) => {
 
 app.post("/change-profile/:id", (req, response) => {
   const uid = req.params.id;
-  const { name,email } = req.body;
-      User.findByIdAndUpdate(uid, { name: name,email:email })
-        .then((res) => {
-          response.json({ result: res });
-        })
-        .catch((err) => {
-          response.json({ error: err });
-        });
-})
+  const { name, email } = req.body;
+  User.findByIdAndUpdate(uid, { name: name, email: email })
+    .then((res) => {
+      response.json({ result: res });
+    })
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
 
 app.post("/update-user/:id", (req, response) => {
   const { account_status } = req.body;
@@ -542,6 +541,39 @@ app.get("/deactivate-token/:token", (req, response) => {
     .then((res) => {
       response.json({ result: res });
     })
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.get("/get-all-student-activities", (req, response) => {
+  StudentActivity.find()
+    .then((res) => response.json({ result: res }))
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.post("/create-student-activity", (req, response) => {
+  const { student, course, lesson } = req.body;
+  const newActivity = new StudentActivity({
+    student: student,
+    course: course,
+    lesson: lesson,
+  });
+  newActivity
+    .save()
+    .then((res) => {
+      response.json({ result: res });
+    })
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.get("/get-all-student-notes", (req, response) => {
+  StudentNote.find()
+    .then((res) => response.json({ result: res }))
     .catch((err) => {
       response.json({ error: err });
     });
