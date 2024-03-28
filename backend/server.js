@@ -29,7 +29,7 @@ mongoose
   .connect(mongodburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 300000,
+    serverSelectionTimeoutMS: 3000000,
   })
   .then(() => {
     console.log("MongoDB connected");
@@ -613,10 +613,9 @@ app.post("/update-student-note", async (req, response) => {
     .catch((err) => response.json({ error: err }));
 });
 
-app.post("upload-student-activity-file/:id", async (req, response) => {
+app.post("/upload-student-activity-file/:id", async (req, response) => {
   const { id } = req.params;
   const { filePaths } = req.body;
-
   upload(req, response, async (err) => {
     if (err) {
       response.json({ error: err });
@@ -624,8 +623,12 @@ app.post("upload-student-activity-file/:id", async (req, response) => {
     }
 
     const activity = await StudentActivity.findById(id);
-    activity.filePaths.push(filePaths);
-    activity.save().then((res) => response.json({ result: res }));
+    filePaths &&
+      JSON.parse(filePaths).map((path) => activity.filePaths.push(path));
+    activity
+      .save()
+      .then((res) => response.json({ result: res }))
+      .catch((err) => response.json({ error: err }));
   });
 });
 

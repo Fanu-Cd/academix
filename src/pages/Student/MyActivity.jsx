@@ -5,7 +5,10 @@ import AntdTable from "../../components/AntdTable";
 import { fetcher } from "../../_services";
 import { setStudentActivities, setStudentNotes } from "../../store/store";
 import API_URL from "../../apiUrl";
-import { PlusCircleFilled, PlusCircleOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  PlusCircleOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 
 const MyActivity = () => {
   const dispatch = useDispatch();
@@ -101,10 +104,10 @@ const MyActivity = () => {
   const myActivities = activities.filter(
     (activity) => activity.student == currentUser._id
   );
-  console.log("myacvities", myActivities);
+  // console.log("myacvities", myActivities);
 
   const notes = useSelector((state) => state.myReducer.studentNotes);
-  console.log("notes", notes);
+  // console.log("notes", notes);
 
   const [showAddActivityModal, setShowAddActivityModal] = useState(false);
   const [showViewActivityModal, setShowViewActivityModal] = useState(false);
@@ -116,11 +119,12 @@ const MyActivity = () => {
     lesson: "",
     note: { subject: "", content: "" },
   });
-  const [files,setFiles]=useState([])
+  const [files, setFiles] = useState([]);
   const [status, setStatus] = useState({
     inputs: { course: "", lesson: "" },
     addNote: false,
     viewNote: false,
+    uploadFile: false,
   });
 
   const handleSubmit = (e, type) => {
@@ -209,6 +213,34 @@ const MyActivity = () => {
       });
   };
 
+  const uploadFile = () => {
+    const formData = new FormData();
+    const filePaths = [];
+    console.log(files);
+    Array.from(files).map((file) => {
+      formData.append("files", file);
+      filePaths.push(file.name);
+    });
+    console.log("here", formData, filePaths);
+
+    formData.append("filePaths", JSON.stringify(filePaths));
+    fetch(`${apiUrl}/upload-student-activity-file/${selectedActivity._id}`, {
+      method: "post",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("res", res);
+        message.success("Files Uploaded Successfully!");
+        getStudentActivities();
+        setFiles([]);
+        setStatus({ ...status, uploadFile: false });
+      })
+      .catch((err) => {
+        console.log("error", err);
+      });
+  };
+
   const getStudentActivities = () => {
     fetcher("get-all-student-activities")
       .then((res) => {
@@ -284,7 +316,7 @@ const MyActivity = () => {
           {selectedActivity.notes.length > 0 || !status.viewNote ? (
             !status.viewNote && !status.addNote ? (
               selectedActivity.notes.map((note) => {
-                console.log("note", note, selectedActivity.notes, notes);
+                // console.log("note", note, selectedActivity.notes, notes);
                 const thisNote = notes.filter((nt) => nt._id == note)[0];
                 return (
                   <li className="d-flex align-items-center">
@@ -497,27 +529,171 @@ const MyActivity = () => {
   };
 
   const activityFiles = () => {
+    console.log(files);
     return (
       <div>
         {selectedActivity.filePaths.length > 0 ? (
-          ""
+          <div className="w-100 d-flex flex-column">
+            {!status.uploadFile && (
+              <Button
+                className="d-block"
+                icon={<PlusCircleOutlined />}
+                type="primary"
+                onClick={() => {
+                  setStatus({ ...status, uploadFile: true });
+                }}
+                style={{ maxWidth: "20%" }}
+              >
+                Add File
+              </Button>
+            )}
+
+            {!status.uploadFile && (
+              <ul className="d-flex flex-column col-9 ps-5 mt-2">
+                {selectedActivity.filePaths.map((file) => (
+                  <li className="text-truncate d-flex align-items-center">
+                    <small className="text-truncate">{file}</small>
+                    <a
+                      href={`${apiUrl}/uploads/${file}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ms-3"
+                      download
+                    >
+                      Download
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {status.uploadFile && (
+              <form>
+                <Button
+                  type="primary"
+                  icon={<UploadOutlined />}
+                  onClick={() => {
+                    document.getElementById("files").click();
+                  }}
+                >
+                  Attach File
+                </Button>
+                <div className="w-100 row">
+                  {files.length > 0 ? (
+                    <ul className="d-flex flex-column col-9 ps-5">
+                      {Array.from(files).map((file) => (
+                        <li className="text-truncate">{file.name}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="d-flex flex-column">
+                      <small className="ms-2 text-danger">
+                        No file Uploaded
+                      </small>
+                      <Button
+                        className="bg-danger text-white mt-5"
+                        style={{ maxWidth: "20%" }}
+                        onClick={() => {
+                          setStatus({ ...status, uploadFile: false });
+                        }}
+                      >
+                        Close
+                      </Button>
+                    </div>
+                  )}
+                  {files.length > 0 && (
+                    <Button className="col-3" onClick={uploadFile}>
+                      Save
+                    </Button>
+                  )}
+                </div>
+
+                <input
+                  hidden
+                  multiple
+                  type="file"
+                  id="files"
+                  onChange={(e) => {
+                    setFiles(e.target.files);
+                    console.log("files", e.target.files);
+                  }}
+                />
+              </form>
+            )}
+          </div>
         ) : (
           <div className="d-flex flex-column">
-            <small className="text-center mt-5 text-danger">
-              You haven't uploaded any file yet.
-            </small>
-            <Button
-              className="mx-auto d-block"
-              icon={<UploadOutlined />}
-              type="primary"
-              onClick={() => {
-                setStatus({ ...status, uploadFile: true });
-                document.getElementById('file').click()
-              }}
-            >
-              Add File
-            </Button>
-            <input hidden type="file" id='files' onChange={(e)=>{setFiles(e.target.files)}} />
+            {!status.uploadFile && (
+              <>
+                <small className="text-center mt-5 text-danger">
+                  You haven't uploaded any file yet.
+                </small>
+                <Button
+                  className="mx-auto d-block"
+                  icon={<PlusCircleOutlined />}
+                  type="primary"
+                  onClick={() => {
+                    setStatus({ ...status, uploadFile: true });
+                  }}
+                >
+                  Add File
+                </Button>
+              </>
+            )}
+
+            {status.uploadFile && (
+              <form>
+                <Button
+                  type="primary"
+                  icon={<UploadOutlined />}
+                  onClick={() => {
+                    document.getElementById("files").click();
+                  }}
+                >
+                  Attach File
+                </Button>
+                <div className="w-100 row">
+                  {files.length > 0 ? (
+                    <ul className="d-flex flex-column col-9 ps-5">
+                      {Array.from(files).map((file) => (
+                        <li className="text-truncate">{file.name}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="d-flex flex-column">
+                      <small className="ms-2 text-danger">
+                        No file Uploaded
+                      </small>
+                      <Button
+                        className="bg-danger text-white mt-5"
+                        style={{ maxWidth: "20%" }}
+                        onClick={() => {
+                          setStatus({ ...status, uploadFile: false });
+                        }}
+                      >
+                        Close
+                      </Button>
+                    </div>
+                  )}
+                  {files.length > 0 && (
+                    <Button className="col-3" onClick={uploadFile}>
+                      Save
+                    </Button>
+                  )}
+                </div>
+
+                <input
+                  hidden
+                  multiple
+                  type="file"
+                  id="files"
+                  onChange={(e) => {
+                    setFiles(e.target.files);
+                    console.log("files", e.target.files);
+                  }}
+                />
+              </form>
+            )}
           </div>
         )}
       </div>
