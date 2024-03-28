@@ -39,7 +39,7 @@ const AdminDashboard = () => {
                 <UserOutlined className="fs-3" />
               </div>
               <h5 className="text-center">Total Users</h5>
-              <h3 className="text-center">{totalUsers}</h3>
+              <h3 className="text-center">{activeUsers}</h3>
             </Card>
           </Col>
           <Col xs={12} md={6}>
