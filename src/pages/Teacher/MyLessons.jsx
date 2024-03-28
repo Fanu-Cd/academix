@@ -292,7 +292,7 @@ const MyLessons = () => {
         style={{ width: "80%" }}
         footer={[]}
       >
-        {showViewModal && (
+        {showAddModal && (
           <div className="w-100 d-flex flex-column">
             <label htmlFor="course">Select Course</label>
             <Select
