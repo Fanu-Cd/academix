@@ -1,10 +1,11 @@
-import { Button, Input, Modal, Select, message } from "antd";
+import { Alert, Button, Input, Modal, Select, Tabs, message } from "antd";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import AntdTable from "../../components/AntdTable";
 import { fetcher } from "../../_services";
-import { setStudentActivities } from "../../store/store";
+import { setStudentActivities, setStudentNotes } from "../../store/store";
 import API_URL from "../../apiUrl";
+import { PlusCircleFilled, PlusCircleOutlined, UploadOutlined } from "@ant-design/icons";
 
 const MyActivity = () => {
   const dispatch = useDispatch();
@@ -22,9 +23,10 @@ const MyActivity = () => {
     {
       title: "Lesson",
       render(item) {
-        const lesson = item.lesson
-          ? myLessons.filter((lesson) => lesson._id == item.lesson)[0].title
-          : "-";
+        const lesson =
+          myLessons && item.lesson
+            ? myLessons.filter((lesson) => lesson._id == item.lesson)[0].title
+            : "-";
         return lesson;
       },
     },
@@ -61,6 +63,7 @@ const MyActivity = () => {
           <Button
             type="primary"
             onClick={() => {
+              setSelectedActivity(item);
               setShowViewActivityModal(true);
             }}
           >
@@ -101,21 +104,38 @@ const MyActivity = () => {
   console.log("myacvities", myActivities);
 
   const notes = useSelector((state) => state.myReducer.studentNotes);
+  console.log("notes", notes);
 
   const [showAddActivityModal, setShowAddActivityModal] = useState(false);
   const [showViewActivityModal, setShowViewActivityModal] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState(null);
 
   const [filtLessons, setFiltLessons] = useState([]);
-  const [input, setInput] = useState({ course: "", lesson: "" });
-  const [status, setStatus] = useState({ inputs: { course: "", lesson: "" } });
+  const [input, setInput] = useState({
+    course: "",
+    lesson: "",
+    note: { subject: "", content: "" },
+  });
+  const [files,setFiles]=useState([])
+  const [status, setStatus] = useState({
+    inputs: { course: "", lesson: "" },
+    addNote: false,
+    viewNote: false,
+  });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, type) => {
     e.preventDefault();
-    console.log(input);
-    if (!input.course) {
-      setStatus({ ...status, inputs: { ...status.inputs, course: "error" } });
+    if (type === "activity") {
+      if (!input.course) {
+        setStatus({ ...status, inputs: { ...status.inputs, course: "error" } });
+      } else {
+        createNewActivity();
+      }
+    } else if (type == "add-note") {
+      createNewNote();
+    } else if (type == "edit-note") {
+      updateNote();
     } else {
-      createNewActivity();
     }
   };
 
@@ -139,15 +159,369 @@ const MyActivity = () => {
       });
   };
 
+  const createNewNote = () => {
+    const body = input.note;
+    fetch(`${apiUrl}/create-student-note`, {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        const newNote = { note: res.result._id };
+        fetch(`${apiUrl}/update-student-activity/${selectedActivity._id}`, {
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newNote),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            message.success("Successfully Created a new note!");
+            getStudentNotes();
+            getStudentActivities();
+            setStatus({ ...status, addNote: false });
+            setInput({ ...input, note: {} });
+          })
+          .catch((err) => {
+            console.log("Error Creating New Note", err);
+            message.error("Error Creating New Note");
+          });
+      });
+  };
+
+  const updateNote = () => {
+    fetch(`${apiUrl}/update-student-note`, {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input.note),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        message.success("Successfully Updated note!");
+        getStudentNotes();
+        getStudentActivities();
+        setStatus({ ...status, viewNote: false });
+        setInput({ ...input, note: {} });
+      })
+      .catch((err) => {
+        console.log("Error Updating New Note", err);
+        message.error("Error Updating New Note");
+      });
+  };
+
   const getStudentActivities = () => {
     fetcher("get-all-student-activities")
       .then((res) => {
         const activities = res.result;
-        dispatch(setStudentActivities(activities));
+        if (activities != undefined) dispatch(setStudentActivities(activities));
       })
       .catch((err) => {
         console.log("Getting Student Activity ERROR", err);
       });
+  };
+
+  const getStudentNotes = () => {
+    fetcher("get-all-student-notes")
+      .then((res) => {
+        const notes = res.result;
+        if (notes != undefined) dispatch(setStudentNotes(notes));
+      })
+      .catch((err) => {
+        console.log("Getting Student Activity ERROR", err);
+      });
+  };
+
+  const activityDetails = () => {
+    return (
+      <div>
+        <ul style={{ listStyleType: "square" }}>
+          <li>
+            Course : {""}
+            {myFinalCourses.length > 0 &&
+              myFinalCourses.filter(
+                (course) => course._id == selectedActivity.course
+              )[0].title}
+          </li>
+          <li>
+            Lesson : {""}
+            {myLessons.length > 0 &&
+              myLessons.filter(
+                (lesson) => lesson._id == selectedActivity.lesson
+              )[0].title}
+          </li>
+          <li>
+            Started activity : {""}
+            {`${selectedActivity.createdAt.split("T")[0]} , ${
+              selectedActivity.createdAt.split("T")[1].split(".")[0]
+            }`}
+          </li>
+          <li>
+            Most recent Activity : {""}
+            {`${selectedActivity.updatedAt.split("T")[0]} , ${
+              selectedActivity.createdAt.split("T")[1].split(".")[0]
+            }`}
+          </li>
+        </ul>
+      </div>
+    );
+  };
+
+  const activityNotes = () => {
+    return (
+      <div>
+        {!status.addNote && !status.viewNote && (
+          <Button
+            type="primary"
+            icon={<PlusCircleOutlined />}
+            onClick={() => {
+              setStatus({ ...status, addNote: true });
+            }}
+          >
+            Add Note
+          </Button>
+        )}
+        <ul className="mt-3">
+          {selectedActivity.notes.length > 0 || !status.viewNote ? (
+            !status.viewNote && !status.addNote ? (
+              selectedActivity.notes.map((note) => {
+                console.log("note", note, selectedActivity.notes, notes);
+                const thisNote = notes.filter((nt) => nt._id == note)[0];
+                return (
+                  <li className="d-flex align-items-center">
+                    <p
+                      className="m-0 text-truncate"
+                      style={{ maxWidth: "60%" }}
+                    >
+                      {thisNote.subject}
+                    </p>
+                    <Button
+                      type="link ms-2"
+                      onClick={() => {
+                        setInput({
+                          ...input,
+                          note: {
+                            id: thisNote._id,
+                            subject: thisNote.subject,
+                            content: thisNote.content,
+                          },
+                        });
+                        setStatus({ ...status, viewNote: true });
+                      }}
+                    >
+                      View
+                    </Button>
+                  </li>
+                );
+              })
+            ) : (
+              <>
+                {status.viewNote && (
+                  <form onSubmit={(e) => handleSubmit(e, "edit-note")}>
+                    <label>Subject</label>
+                    <Input
+                      value={input.note.subject}
+                      placeholder="Subject here"
+                      onChange={(e) => {
+                        setInput({
+                          ...input,
+                          note: { ...input.note, subject: e.target.value },
+                        });
+                      }}
+                      required
+                      minLength={5}
+                    />
+                    <label className="mt-1">Note</label>
+                    <Input.TextArea
+                      value={input.note.content}
+                      maxLength={2000}
+                      placeholder="Content here"
+                      style={{ resize: "none", minHeight: "15rem" }}
+                      onChange={(e) => {
+                        setInput({
+                          ...input,
+                          note: { ...input.note, content: e.target.value },
+                        });
+                      }}
+                      required
+                    ></Input.TextArea>
+                    <Alert
+                      className="mt-2"
+                      message="Your note's content shouldn't be more than 2000 characters"
+                      type="info"
+                      showIcon
+                      style={{ width: "50%" }}
+                    />
+                    <div className="d-flex justify-content-between mt-3">
+                      <Button
+                        className="bg-danger text-white"
+                        onClick={() => {
+                          setStatus({ ...status, viewNote: false });
+                        }}
+                      >
+                        Close
+                      </Button>
+                      <Button type="primary" htmlType="submit">
+                        Save Note
+                      </Button>
+                    </div>
+                  </form>
+                )}
+
+                {status.addNote && (
+                  <form onSubmit={(e) => handleSubmit(e, "add-note")}>
+                    <label>Subject</label>
+                    <Input
+                      value={input.note.subject}
+                      placeholder="Subject here"
+                      onChange={(e) => {
+                        setInput({
+                          ...input,
+                          note: { ...input.note, subject: e.target.value },
+                        });
+                      }}
+                      required
+                      minLength={5}
+                    />
+                    <label className="mt-1">Note</label>
+                    <Input.TextArea
+                      value={input.note.content}
+                      maxLength={2000}
+                      placeholder="Content here"
+                      style={{ resize: "none", minHeight: "15rem" }}
+                      onChange={(e) => {
+                        setInput({
+                          ...input,
+                          note: { ...input.note, content: e.target.value },
+                        });
+                      }}
+                      required
+                    ></Input.TextArea>
+                    <Alert
+                      className="mt-2"
+                      message="Your note's content shouldn't be more than 2000 characters"
+                      type="info"
+                      showIcon
+                      style={{ width: "50%" }}
+                    />
+                    <div className="d-flex justify-content-between mt-3">
+                      <Button
+                        className="bg-danger text-white"
+                        onClick={() => {
+                          setStatus({ ...status, addNote: false });
+                        }}
+                      >
+                        Close
+                      </Button>
+                      <Button type="primary" htmlType="submit">
+                        Save Note
+                      </Button>
+                    </div>
+                  </form>
+                )}
+              </>
+            )
+          ) : (
+            <>
+              {!status.addNote ? (
+                <div className="d-flex flex-column">
+                  <small className="text-center mt-5 text-danger">
+                    You haven't added any note yet.
+                  </small>
+                  <Button
+                    className="mx-auto d-block"
+                    icon={<PlusCircleOutlined />}
+                    type="primary"
+                    onClick={() => {
+                      setStatus({ ...status, addNote: true });
+                    }}
+                  >
+                    Add Note
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={(e) => handleSubmit(e, "add-note")}>
+                  <label>Subject</label>
+                  <Input
+                    value={input.note.subject}
+                    placeholder="Subject here"
+                    onChange={(e) => {
+                      setInput({
+                        ...input,
+                        note: { ...input.note, subject: e.target.value },
+                      });
+                    }}
+                    required
+                    minLength={5}
+                  />
+                  <label className="mt-1">Note</label>
+                  <Input.TextArea
+                    value={input.note.content}
+                    maxLength={2000}
+                    placeholder="Content here"
+                    style={{ resize: "none", minHeight: "15rem" }}
+                    onChange={(e) => {
+                      setInput({
+                        ...input,
+                        note: { ...input.note, content: e.target.value },
+                      });
+                    }}
+                    required
+                  ></Input.TextArea>
+                  <Alert
+                    className="mt-2"
+                    message="Your note's content shouldn't be more than 2000 characters"
+                    type="info"
+                    showIcon
+                    style={{ width: "50%" }}
+                  />
+                  <div className="d-flex justify-content-between mt-3">
+                    <Button
+                      className="bg-danger text-white"
+                      onClick={() => {
+                        setStatus({ ...status, addNote: false });
+                      }}
+                    >
+                      Close
+                    </Button>
+                    <Button type="primary" htmlType="submit">
+                      Save Note
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </>
+          )}
+        </ul>
+      </div>
+    );
+  };
+
+  const activityFiles = () => {
+    return (
+      <div>
+        {selectedActivity.filePaths.length > 0 ? (
+          ""
+        ) : (
+          <div className="d-flex flex-column">
+            <small className="text-center mt-5 text-danger">
+              You haven't uploaded any file yet.
+            </small>
+            <Button
+              className="mx-auto d-block"
+              icon={<UploadOutlined />}
+              type="primary"
+              onClick={() => {
+                setStatus({ ...status, uploadFile: true });
+                document.getElementById('file').click()
+              }}
+            >
+              Add File
+            </Button>
+            <input hidden type="file" id='files' onChange={(e)=>{setFiles(e.target.files)}} />
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -188,7 +562,7 @@ const MyActivity = () => {
         {showAddActivityModal && (
           <form
             className="d-flex flex-column justify-content-center"
-            onSubmit={handleSubmit}
+            onSubmit={(e) => handleSubmit(e, "activity")}
           >
             <label>Choose course</label>
             <Select
@@ -238,12 +612,41 @@ const MyActivity = () => {
         onCancel={() => {
           setShowViewActivityModal(false);
         }}
-        style={{ width: "90vw !important" }}
+        style={{
+          minWidth: "80vw",
+          maxWidth: "1000px !important",
+          minHeight: "30rem !important",
+          maxHeight: "50rem !important",
+          height: "auto",
+        }}
+        className="text-center"
         footer={[]}
       >
-        {showViewActivityModal && 
-        <div className="w-100"></div>
-        }
+        {showViewActivityModal && (
+          <div className="w-100">
+            <Tabs
+              tabPosition="left"
+              items={[
+                {
+                  key: "1",
+                  label: "Activity",
+                  children: activityDetails(),
+                },
+                {
+                  key: "2",
+                  label: "My Notes",
+                  children: activityNotes(),
+                },
+                {
+                  key: "3",
+                  label: "My Files",
+                  children: activityFiles(),
+                },
+              ]}
+              className="text-start"
+            />
+          </div>
+        )}
       </Modal>
     </div>
   );

@@ -29,6 +29,7 @@ mongoose
   .connect(mongodburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 300000,
   })
   .then(() => {
     console.log("MongoDB connected");
@@ -571,12 +572,61 @@ app.post("/create-student-activity", (req, response) => {
     });
 });
 
+app.post("/update-student-activity/:id", async (req, response) => {
+  const { id } = req.params;
+  const updateData = req.body;
+  if (updateData.note) {
+    const activity = await StudentActivity.findById(id);
+    activity.notes.push(updateData.note);
+    activity.save().then((res) => response.json({ result: res }));
+  }
+});
+
 app.get("/get-all-student-notes", (req, response) => {
   StudentNote.find()
     .then((res) => response.json({ result: res }))
     .catch((err) => {
       response.json({ error: err });
     });
+});
+
+app.post("/create-student-note", (req, response) => {
+  const { subject, content } = req.body;
+  const newNote = new StudentNote({
+    subject: subject,
+    content: content,
+  });
+  newNote
+    .save()
+    .then((res) => {
+      response.json({ result: res });
+    })
+    .catch((err) => {
+      response.json({ error: err });
+    });
+});
+
+app.post("/update-student-note", async (req, response) => {
+  const { id, subject, content } = req.body;
+  StudentNote.findByIdAndUpdate(id, { subject: subject, content: content })
+    .then((res) => response.json({ result: res }))
+    .catch((err) => response.json({ error: err }));
+});
+
+app.post("upload-student-activity-file/:id", async (req, response) => {
+  const { id } = req.params;
+  const { filePaths } = req.body;
+
+  upload(req, response, async (err) => {
+    if (err) {
+      response.json({ error: err });
+      return;
+    }
+
+    const activity = await StudentActivity.findById(id);
+    activity.filePaths.push(filePaths);
+    activity.save().then((res) => response.json({ result: res }));
+  });
 });
 
 //Methods
