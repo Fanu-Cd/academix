@@ -1,35 +1,37 @@
-const mongoose = require("mongoose"); // Mongoose for communicating with mongoDB
+const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
-const port = 3001;
 const app = express();
 const cors = require("cors");
+
 const User = require("./models/user");
 const Department = require("./models/department");
 const Course = require("./models/course");
 const Token = require("./models/token");
-
 const CourseRegistration = require("./models/course-registration");
-require("dotenv").config();
-const bcrypt = require("bcrypt");
-const multer = require("multer");
+const StudentActivity = require("./models/student-activity");
+const StudentNote = require("./models/student-notes");
 const Lesson = require("./models/lesson");
 const Exam = require("./models/exam");
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+
+require("dotenv").config();
+const bcrypt = require("bcrypt");
+const multer = require("multer");
 const mongodburl = process.env.MONGODB_URL;
 const { google } = require("googleapis");
 const { v4: uuidv4 } = require("uuid");
-const StudentActivity = require("./models/student-activity");
-const StudentNote = require("./models/student-notes");
 const OAuth2 = google.auth.OAuth2;
+const port = process.env.PORT || 3001;
+
 mongoose
   .connect(mongodburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 3000000,
   })
   .then(() => {
     console.log("MongoDB connected");

@@ -25,7 +25,6 @@ const Students = () => {
   const students = useSelector((state) => state.myReducer.users).filter(
     (user) => user.role == "student" && user.account_status == "active"
   );
-  console.log("students", students);
   const departments = useSelector((state) => state.myReducer.departments);
   const [filteredStudents, setFilteredStudents] = useState(students);
 

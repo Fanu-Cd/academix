@@ -76,7 +76,6 @@ const Courses = () => {
 
   const filterData = () => {
     const filtered = initialCourses.filter((course) => {
-      console.log(filterBy, filterCondition, course);
       const result =
         filterBy !== "name" && filterBy !== "id"
           ? course[filterBy] == filterCondition

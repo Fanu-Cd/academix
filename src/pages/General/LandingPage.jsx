@@ -8,6 +8,7 @@ import { IoIosSpeedometer } from "react-icons/io";
 import teacher from "../../assets/undraw_teacher_re_sico.svg";
 import student from "../../assets/undraw_online_reading_np7n.svg";
 import admin from "../../assets/undraw_dashboard_re_3b76.svg";
+import logo from "../../assets/school-solid.svg";
 import Footer from "../../components/Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -30,8 +31,13 @@ const LandingPage = () => {
         className="navbar navbar-expand-md navbar-light d-md-flex justify-content-md-between align-items-md-center mx-auto"
         style={{ width: "95%" }}
       >
-        <a className="navbar-brand" href="/#">
-          AcademiX
+        <a className="navbar-brand d-flex align-items-center" href="/#">
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: "1.2rem", height: "1.2rem", objectFit: "cover" }}
+          />
+          <p className="m-0 ms-2">AcademiX</p>
         </a>
         <button
           className="navbar-toggler"

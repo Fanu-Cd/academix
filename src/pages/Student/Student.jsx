@@ -11,7 +11,7 @@ import {
 import { Layout, Menu, Button, theme, Popconfirm } from "antd";
 import { MdLogout, MdOutlineAnalytics } from "react-icons/md";
 import { FaBookOpen, FaPencilAlt } from "react-icons/fa";
-import Me from "../../common/Me";
+import Me from "../common/Me";
 import Courses from "./Courses";
 import MyCourses from "./MyCourses";
 import Lessons from "./Lessons";

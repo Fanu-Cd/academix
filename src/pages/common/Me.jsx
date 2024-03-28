@@ -1,8 +1,8 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Input, Modal, message } from "antd";
 import { useState } from "react";
-import { sendEmail, validateEmail } from "../_services"
-import API_URL from "../apiUrl"
+import { sendEmail, validateEmail } from "../../_services";
+import API_URL from "../../apiUrl";
 import { useSelector } from "react-redux";
 
 const Me = () => {
@@ -54,7 +54,7 @@ const Me = () => {
           })
             .then((res) => res.json())
             .then((res) => {
-              if (res.result.length>0) {
+              if (res.result.length > 0) {
                 setStatus({ ...status, inputs: { email: "error" } });
               } else {
                 changeProfile();
@@ -163,7 +163,6 @@ const Me = () => {
   };
 
   const userInfo = JSON.parse(localStorage.getItem("currentUser"));
-  console.log(userInfo);
   return (
     <div className="w-100">
       <h5 className="text-center">Me</h5>

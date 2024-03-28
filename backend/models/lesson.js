@@ -7,7 +7,7 @@ const lessonSchema = new mongoose.Schema(
     course: { type: mongoose.Types.ObjectId, required: false, ref: "Course" },
     filePaths: [{ type: String, required: false }],
   },
-  { collection: "Lesson",timestamps:true }
+  { collection: "Lesson", timestamps: true }
 );
 
 const Lesson = mongoose.model("Lesson", lessonSchema);

@@ -28,7 +28,6 @@ body {
 }
 
 .qualities Button {
-  /* width: 20%; */
   min-height: 3rem;
   height: auto;
   text-wrap: wrap;

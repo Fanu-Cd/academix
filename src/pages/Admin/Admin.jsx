@@ -17,7 +17,7 @@ import Departments from "./Departments";
 import Courses from "./Courses";
 import Teachers from "./Teachers";
 import Students from "./Students";
-import Me from "../../common/Me";
+import Me from "../common/Me";
 const { Header, Sider, Content } = Layout;
 
 const Admin = () => {

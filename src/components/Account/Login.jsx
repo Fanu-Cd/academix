@@ -98,7 +98,6 @@ const Login = () => {
     fetch(`${apiUrl}/generate-token`)
       .then((res) => res.json())
       .then((res) => {
-        console.log("res", res);
         navigate(
           `/account/forgot-password?email=${input.email}&token=${res.result.token}`
         );

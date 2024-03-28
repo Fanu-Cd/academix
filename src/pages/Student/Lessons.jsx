@@ -15,7 +15,6 @@ const Lessons = () => {
     {
       title: "Course Name",
       render(item) {
-        console.log("item", item, myFinalCourses);
         const name =
           myFinalCourses.length > 0
             ? myFinalCourses.filter((course) => course._id == item.course)[0]
@@ -37,14 +36,12 @@ const Lessons = () => {
     {
       title: "Assigned Teachers",
       render(item) {
-        console.log("myFinalCourses", myFinalCourses);
         const course = myFinalCourses.filter(
           (course) => course._id == item.course
         )[0];
         const allTeachers = teachers.filter((teacher) =>
           course.teachers.includes(teacher._id)
         );
-        console.log("all", allTeachers);
         return allTeachers.map((teacher) => (
           <small className="fw-bold">{teacher.name} ,</small>
         ));
@@ -66,7 +63,6 @@ const Lessons = () => {
     {
       title: "Actions",
       render(item) {
-        console.log("item", item);
         return (
           <div className="d-flex">
             <Button
@@ -126,13 +122,7 @@ const Lessons = () => {
       myLessons.filter((lesson) => lesson._id == exam.lesson).length != 0;
     return isOfMyLesson;
   });
-  console.log("my Exams", myExams);
 
-  //   console.log("myFinalCourses", myFinalCourses);
-  //   console.log("coursereg", courseRegs);
-  //   console.log("mycoursereg", myCourseRegs);
-
-  //   console.log(allCourses, currentUser);
   const [filteredLessons, setFilteredLessons] = useState(myLessons);
   const [filterBy, setFilterBy] = useState("title");
   const [filterCondition, setFilterCondition] = useState("");
@@ -143,7 +133,6 @@ const Lessons = () => {
   const [selectedLesson, setSelectedLesson] = useState(null);
 
   const filterData = () => {
-    // console.log(myCourses, filterBy, filterCondition);
     const filtered =
       filterBy == "title"
         ? myLessons.filter((course) =>

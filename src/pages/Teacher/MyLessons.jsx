@@ -98,7 +98,6 @@ const MyLessons = () => {
       myLessons.filter((lesson) => lesson._id == exam.lesson).length != 0;
     return isOfMyLesson;
   });
-  console.log("my Exams", myExams);
   const [filteredLessons, setFilteredLessons] = useState(myLessons);
 
   const [showAddModal, setShowAddModal] = useState(false);

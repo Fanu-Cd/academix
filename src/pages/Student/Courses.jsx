@@ -52,7 +52,6 @@ const Courses = () => {
     {
       title: "Total Lessons",
       render(item) {
-        console.log(myLessons, item);
         const totalLesson = myLessons.filter(
           (lesson) => lesson.course == item._id
         ).length;
@@ -91,8 +90,6 @@ const Courses = () => {
 
   const courseRegs = useSelector((state) => state.myReducer.courseRegs);
 
-  console.log("courseRegs", courseRegs);
-
   const myCourses = allCourses.filter(
     (course) => course.department == currentUser.department
   );
@@ -104,7 +101,6 @@ const Courses = () => {
     );
     return isOfMyCourse;
   });
-  console.log("sll", myLessons);
 
   const [filteredCourses, setFilteredCourses] = useState(myCourses);
   const [filterBy, setFilterBy] = useState("title");

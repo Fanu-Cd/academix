@@ -37,7 +37,6 @@ const ForgotPassword = () => {
     fetch(`${apiUrl}/verify-token/${token}`)
       .then((res) => res.json())
       .then((res) => {
-        console.log("res", res);
         if (res && res.result) {
           setTokenValid(true);
         } else {
@@ -58,7 +57,6 @@ const ForgotPassword = () => {
   const handleCodeChange = async (e) => {
     setStatus({ ...status, inputs: { ...status.inputs, code: "" } });
     const code = e.target.value;
-    console.log(verificationCode);
     if (code.length == 6 && code !== verificationCode) {
       setStatus({ ...status, inputs: { ...status.inputs, code: "error" } });
     } else {
@@ -83,7 +81,6 @@ const ForgotPassword = () => {
       });
     } else {
       verifyEmail().then((res) => {
-        console.log("res", res);
         if (res.result && res.result.length > 0) {
           const verifCode = generateCode(6);
           setVerificationCode(verifCode);

@@ -34,7 +34,6 @@ const Teachers = () => {
   );
   const departments = useSelector((state) => state.myReducer.departments);
   const courses = useSelector((state) => state.myReducer.courses);
-  console.log("teachers", teachers);
   const [filteredTeachers, setFilteredTeachers] = useState(teachers);
 
   return (

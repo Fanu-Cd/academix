@@ -60,8 +60,6 @@ const Account = () => {
     },
   });
 
-  console.log("departments", departments);
-  console.log("users", users);
   const columns = [
     {
       title: "Name",

@@ -36,10 +36,8 @@ const MyCourses = () => {
   const myLessons = allLessons.filter(
     (lesson) => lesson.uploadedBy == currentUser._id
   );
-  console.log(myCourses);
 
   const filterData = () => {
-    console.log(myCourses, filterBy, filterCondition);
     const filtered =
       filterBy == "title"
         ? myCourses.filter((course) =>

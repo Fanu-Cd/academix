@@ -36,7 +36,6 @@ const ChangePassword = () => {
     fetch(`${apiUrl}/verify-token/${token}`)
       .then((res) => res.json())
       .then((res) => {
-        console.log("res", res);
         if (res && res.result) {
           setTokenValid(true);
         } else {
@@ -56,7 +55,6 @@ const ChangePassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(input);
     if (!input.email || !validateInput()) {
       return;
     } else {

@@ -5,10 +5,7 @@ import AntdTable from "../../components/AntdTable";
 import { fetcher } from "../../_services";
 import { setStudentActivities, setStudentNotes } from "../../store/store";
 import API_URL from "../../apiUrl";
-import {
-  PlusCircleOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { PlusCircleOutlined, UploadOutlined } from "@ant-design/icons";
 
 const MyActivity = () => {
   const dispatch = useDispatch();
@@ -98,16 +95,13 @@ const MyActivity = () => {
       myFinalCourses.filter((course) => course._id == lesson.course).length > 0;
     return isOfMyCourse;
   });
-  // console.log("myLessons", myLessons);
 
   const activities = useSelector((state) => state.myReducer.studentActivities);
   const myActivities = activities.filter(
     (activity) => activity.student == currentUser._id
   );
-  // console.log("myacvities", myActivities);
 
   const notes = useSelector((state) => state.myReducer.studentNotes);
-  // console.log("notes", notes);
 
   const [showAddActivityModal, setShowAddActivityModal] = useState(false);
   const [showViewActivityModal, setShowViewActivityModal] = useState(false);
@@ -216,12 +210,10 @@ const MyActivity = () => {
   const uploadFile = () => {
     const formData = new FormData();
     const filePaths = [];
-    console.log(files);
     Array.from(files).map((file) => {
       formData.append("files", file);
       filePaths.push(file.name);
     });
-    console.log("here", formData, filePaths);
 
     formData.append("filePaths", JSON.stringify(filePaths));
     fetch(`${apiUrl}/upload-student-activity-file/${selectedActivity._id}`, {
@@ -230,7 +222,6 @@ const MyActivity = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("res", res);
         message.success("Files Uploaded Successfully!");
         getStudentActivities();
         setFiles([]);
@@ -316,7 +307,6 @@ const MyActivity = () => {
           {selectedActivity.notes.length > 0 || !status.viewNote ? (
             !status.viewNote && !status.addNote ? (
               selectedActivity.notes.map((note) => {
-                // console.log("note", note, selectedActivity.notes, notes);
                 const thisNote = notes.filter((nt) => nt._id == note)[0];
                 return (
                   <li className="d-flex align-items-center">
@@ -529,7 +519,6 @@ const MyActivity = () => {
   };
 
   const activityFiles = () => {
-    console.log(files);
     return (
       <div>
         {selectedActivity.filePaths.length > 0 ? (
@@ -615,7 +604,6 @@ const MyActivity = () => {
                   id="files"
                   onChange={(e) => {
                     setFiles(e.target.files);
-                    console.log("files", e.target.files);
                   }}
                 />
               </form>
@@ -689,7 +677,6 @@ const MyActivity = () => {
                   id="files"
                   onChange={(e) => {
                     setFiles(e.target.files);
-                    console.log("files", e.target.files);
                   }}
                 />
               </form>
