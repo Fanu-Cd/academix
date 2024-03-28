@@ -1,1 +1,1 @@
-![IMAGE](/src/screen_images/admin.png)
+![IMAGE](./src/screen_images/admin.png)
